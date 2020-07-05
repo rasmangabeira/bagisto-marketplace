@@ -26,12 +26,9 @@
                 @csrf
               
             
-                <div class="accordian active">
-                    <div class="accordian-header">
-                        {{ __('marketplace::app.seller.account.profile.general') }}
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                <accordian :title="'{{ __('marketplace::app.seller.account.profile.general') }}'" :active="true">
+                   
+                    <div slot="body">
                 <div :class="`row ${errors.has('shop_title') ? 'has-error' : ''}`">
                     <label class="col-12 mandatory">
                         {{ __('marketplace::app.seller.account.profile.shopTitle') }}
@@ -100,14 +97,11 @@
                 </div>
                 @include ('shop::customers.account.address.country-state', ['countryCode' => old('country'), 'stateCode' => $seller->state,'defaultCountry'=>$seller->country])
                 </div>
-                </div> 
+                 </accordian> 
                 
-                <div class="accordian">
-                    <div class="accordian-header">
-                         {{ __('marketplace::app.seller.account.profile.media') }}
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                <accordian :title="'{{ __('marketplace::app.seller.account.profile.media') }}'" >
+                    <div slot="body">
+                  
                         <div>
                             <div class="form-group">
                                 <label>{{ __('marketplace::app.seller.account.profile.logo') }}</label>
@@ -118,16 +112,14 @@
                                   <image-wrapper :button-label="'{{ __('admin::app.catalog.products.add-image-btn-title') }}'" input-name="banner_img" :multiple="false"  :images='"{{ $seller->banner_url }}"'></image-wrapper>
                             </div>
                         </div>
-                    </div>
-                </div>
+                  
+                        </div>
+                </accordian> 
                 
                 
-                <div class="accordian">
-                    <div class="accordian-header">
-                        Social Links
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                 <accordian :title="'{{ __('marketplace::app.seller.account.profile.Social Links') }}'" >
+                    
+                     <div slot="body">
                         <div>
                             <div class="form-group">
                                 <label class="col-12">
@@ -174,25 +166,21 @@
                         </div>
                     </div>
                     
-                </div>
-                <div class="accordian">
-                    <div class="accordian-header">
-                        About Shop
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                </accordian> 
+                <accordian :title="'{{ __('marketplace::app.seller.account.profile.About Shop') }}'" >
+                    
+                    <div slot="body">
                         <div>
                             <input class="tinymce" value="{{ $seller->about_shop }}" name="about_shop" type="text" />
                         </div>
                     </div>
-                </div>
+                 </accordian> 
                 
-                <div class="accordian">
-                    <div class="accordian-header">
-                        {{ __('marketplace::app.seller.account.profile.policies') }}
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                 <accordian :title="'{{ __('marketplace::app.seller.account.profile.policies') }}'" >
+                     
+           
+                   
+                     <div slot="body">
                         <div>
                             <div class="form-group">
                                 <label for="return_policy">{{ __('marketplace::app.seller.account.profile.return_policy') }}</label>
@@ -213,14 +201,11 @@
                         
                     </div>
                     
-                </div>
+                 </accordian> 
                 
-                <div class="accordian">
-                    <div class="accordian-header">
-                        SEO
-                        <i class="icon accordian-up-icon"></i>
-                    </div>
-                    <div class="accordian-content">
+                <accordian :title="'{{ __('marketplace::app.seller.account.profile.SEO') }}'" >
+                    
+                     <div slot="body">
                         <div>
                             <div class="form-group">
                                 <label class="col-12">
@@ -236,7 +221,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                 </accordian> 
                
 
                 <button

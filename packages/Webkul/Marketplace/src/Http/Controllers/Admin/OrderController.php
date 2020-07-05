@@ -8,6 +8,8 @@
 
 use Webkul\Admin\Http\Controllers\Controller;
 
+use Webkul\Marketplace\Repositories\{SellerInvoiceRepository,SellerOrderRepository};
+
 class OrderController extends Controller{
     
     /**
@@ -17,10 +19,25 @@ class OrderController extends Controller{
      */
     protected $_config;
     
-    public function __construct()
+    /**
+     *
+     * @var SellerInvoiceRepository
+     */
+    protected $sellerInvoiceRepository;
+    /**
+     *
+     * @var SellerOrderRepository
+     */
+    protected $sellerOrderRepository;
+    
+    
+    public function __construct(SellerInvoiceRepository $sellerInvoiceRepository,
+            SellerOrderRepository $sellerOrderRepository)
     {
         $this->middleware('admin');
         $this->_config = request('_config');
+        $this->sellerInvoiceRepository = $sellerInvoiceRepository;
+        $this->sellerOrderRepository = $sellerOrderRepository;
     }
     
     /**
@@ -31,6 +48,45 @@ class OrderController extends Controller{
     public function index()
     {
         return view($this->_config['view']);
+    }
+    
+    public function createInvoice() {
+        
+//        $invoiceItems = \Webkul\Sales\Models\InvoiceItem::where(['order_item_id'=>44])->get();
+        $data = request()->all();
+       
+//        $sellerInvoice = new \Webkul\Marketplace\Models\SellerInvoice();
+//        
+//        $total = $invoiceItems->sum('total');
+        
+
+        $param = [
+            'order_id'=>$data['order_id'],
+            'grand_total'=>$data['remaining'],
+            'base_grand_total'=>$data['remaining'],
+            'transaction_id'=>time() . '-' . $data['seller_id'],
+            'comment'=>$data['comment'],
+            'seller_id'=>$data['seller_id']
+        ];
+        
+        $this->sellerInvoiceRepository->create($param);
+        $sellerOrder = $this->sellerOrderRepository->find($data['order_id']);
+        
+        $finalAmmount = $data['remaining']+$sellerOrder->total_paid;
+        
+        if($finalAmmount == $data['seller_total']){
+            $status = 'Already Paid';
+        }else{
+            $status = 'Invoice Pending';
+        }
+        $ammount = $data['remaining'];
+        $this->sellerOrderRepository
+                ->update([
+                    'status'=>$status,
+                    'total_paid'=>$finalAmmount
+                    ],$data['order_id']);
+        //}
+        
     }
     
 }

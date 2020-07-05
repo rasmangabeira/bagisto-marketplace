@@ -7,7 +7,17 @@ return [
         ],
         'product'=>[
             'title'=>'Products'
+        ],
+        'customer'=>[
+            'commission'=>'Commission',
+            'commission_percentage'=>'Commission Percentage'
         ]
+    ],
+    'product'=>[
+      'index'=>[
+          'page-title'=>'Products',
+          'add-product'=>'Add Product'
+      ]  
     ],
     'seller'=>[
         'account'=>[

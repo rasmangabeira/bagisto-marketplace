@@ -10,7 +10,7 @@ class Seller extends Model implements SellerContract
 {
     protected $table = 'sellers';
     
-    protected $fillable = array('shop_title', 'url', 'tax_vat','phone','address1','address2','country','state','postcode','about_shop','twitter','facebook','youtube','instagram','skype','linked_in','pinterest','return_policy','shipping_policy','privacy_policy','meta_description','meta_keywords','customer_id','logo','banner','id');
+    protected $fillable = array('shop_title', 'url', 'tax_vat','phone','address1','address2','country','state','postcode','about_shop','twitter','facebook','youtube','instagram','skype','linked_in','pinterest','return_policy','shipping_policy','privacy_policy','meta_description','meta_keywords','customer_id','logo','banner','id','commission_percentage');
     
     /**
      * Get image url for the category image.

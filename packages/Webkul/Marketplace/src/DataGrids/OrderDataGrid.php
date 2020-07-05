@@ -15,13 +15,12 @@ class OrderDataGrid extends DataGrid
     
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('orders as order')
-            ->join('seller_orders as order_seller', 'order.id', '=', 'order_seller.order_id')  
-            ->addSelect('order.id as order_id','order.grand_total','order.base_grand_total','order.created_at','order.status','order.customer_first_name')
+        $queryBuilder = 
+                DB::table('seller_orders as order_seller')
+            ->join('orders as order', 'order.id', '=', 'order_seller.order_id')    
+            ->addSelect('order_seller.id as order_id','order_seller.grand_total','order_seller.sub_total','order.created_at','order.status','order.customer_first_name')
                 
-            ->where('order_seller.seller_id', auth()->guard('customer')->user()->id);    
-   
-
+            ->where('order_seller.seller_id', auth()->guard('customer')->user()->id); 
         $this->addFilter('order_id','order.id');
         $this->setQueryBuilder($queryBuilder);
     }
@@ -37,7 +36,7 @@ class OrderDataGrid extends DataGrid
             'filterable' => true,
         ]);
         $this->addColumn([
-            'index'      => 'base_grand_total',
+            'index'      => 'sub_total',
             'label'      => 'Base Total',
             'type'       => 'string',
             'searchable' => false,
@@ -67,6 +66,24 @@ class OrderDataGrid extends DataGrid
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+            'closure'    => true,
+            'wrapper'    => function ($value) {
+                if ($value->status == 'processing') {
+                    return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.processing') . '</span>';
+                } elseif ($value->status == 'completed') {
+                    return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.completed') . '</span>';
+                } elseif ($value->status == "canceled") {
+                    return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.canceled') . '</span>';
+                } elseif ($value->status == "closed") {
+                    return '<span class="badge badge-md badge-info">' . trans('shop::app.customer.account.order.index.closed') . '</span>';
+                } elseif ($value->status == "pending") {
+                    return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending') . '</span>';
+                } elseif ($value->status == "pending_payment") {
+                    return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending-payment') . '</span>';
+                } elseif ($value->status == "fraud") {
+                    return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.fraud') . '</span>';
+                }
+            },
         ]);
         
         $this->addColumn([

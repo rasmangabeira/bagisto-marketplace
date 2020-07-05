@@ -20,6 +20,18 @@ class SellerRepository extends Repository
     {
         return  $this->model->create($data);
     }
+    
+    public function getAdminCommission($id) {
+        $seller = $this->model->find($id);
+        $commission_percentage = $seller->commission_percentage;
+        if($commission_percentage){
+            return $commission_percentage;
+        }elseif(core()->getConfigData('marketplace.settings.general.commission_per_unit')){
+            return core()->getConfigData('marketplace.settings.general.commission_per_unit');
+        }else{
+            return 0;
+        }
+    }
 
    
 }

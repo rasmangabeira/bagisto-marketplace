@@ -5,9 +5,6 @@
 @endsection
 
 @section('page-detail-wrapper')
-        <a href="{{ route('seller.products.create') }}" class="theme-btn light unset pull-right">
-            Add Product
-        </a>
     <div class="account-head mb-10">
         <span class="back-icon">
             <a href="{{ route('customer.account.index') }}">

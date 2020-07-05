@@ -68,4 +68,24 @@ class ProductDataGrid extends DataGrid
             'filterable' => true,
         ]);
     }
+    
+    public function prepareActions() {
+        $this->addAction([
+            'title'        => trans('admin::app.datagrid.delete'),
+            'method'       => 'POST',
+            'route'        => 'admin.catalog.products.delete',
+            'confirm_text' => trans('ui::app.datagrid.massaction.delete', ['resource' => 'product']),
+            'icon'         => 'icon trash-icon',
+        ]);
+    }
+    
+    public function prepareMassActions()
+    {
+        $this->addMassAction([
+            'type'   => 'delete',
+            'label'  => trans('admin::app.datagrid.delete'),
+            'action' => route('admin.catalog.products.massdelete'),
+            'method' => 'DELETE',
+        ]);
+    }
 }

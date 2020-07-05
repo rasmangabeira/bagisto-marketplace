@@ -30,6 +30,11 @@
              Route::get('/marketplace/orders', 'Webkul\Marketplace\Http\Controllers\Admin\OrderController@index')->defaults('_config', [
                     'view' => 'marketplace::admin.order.index'
             ])->name('admin.marketplace.order.index');
+             
+             
+             Route::post('marketplace/sellers/masssdelete', 'Webkul\Marketplace\Http\Controllers\Admin\SellerController@massDestroy')->name('admin.marketplace.sellers.mass-delete');
+             
+             Route::post('marketplace/orders', 'Webkul\Marketplace\Http\Controllers\Admin\OrderController@createInvoice')->name('admin.order.createInvoice');
             
             
         });
@@ -80,25 +85,33 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
      
      Route::get('/marketplace/account/catalog/products/edit/{id}', 'Webkul\Product\Http\Controllers\ProductController@edit')->defaults('_config', [
                     'view' => 'marketplace::product.edit'
-     ])->name('seller.products.edit');
+     ])->name('seller.products.edit')->middleware(\Webkul\Marketplace\Http\Middleware\SellerProduct::class);
      
      
-     Route::put('/marketplace/account/catalog/products/edit/{id}', 'Webkul\Product\Http\Controllers\ProductController@update')->defaults('_config', [
+     Route::put('/marketplace/account/catalog/products/edit/{id}', 'Webkul\Marketplace\Http\Controllers\ProductController@update')->defaults('_config', [
                     'redirect' => 'seller.products.index'
-                ])->name('seller.products.update');
+                ])->name('seller.products.update')->middleware(\Webkul\Marketplace\Http\Middleware\SellerProduct::class);
      
      
      
-     
-     
+
+          
      Route::get('/marketplace/account/sales/orders', 'Webkul\Marketplace\Http\Controllers\OrderController@index')->defaults('_config', [
                     'view' => 'marketplace::order.index'
      ])->name('seller.orders.index');
      
      
+     
+          Route::get('/marketplace/account/sales/orders/view/{id}', 'Webkul\Marketplace\Http\Controllers\OrderController@view')
+            ->defaults('_config', [
+                    'view' => 'marketplace::order.view'
+             ])
+            ->name('seller.orders.view');
+     
+     
      Route::get('marketplace/seller/profile/{url}', 'Webkul\Marketplace\Http\Controllers\SellerController@index')->defaults('_config', [
             'view' => 'marketplace::customers.signup.x'
-        ])->name('customer.register.index');
+        ])->name('seller.profile.index');
      
    
 });

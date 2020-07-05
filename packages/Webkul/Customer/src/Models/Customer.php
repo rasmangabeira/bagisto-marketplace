@@ -34,8 +34,6 @@ class Customer extends Authenticatable implements CustomerContract, JWTSubject
         'status',
         // start wewebit
         'is_seller',
-        'url'
-    
         //end
     ];
 

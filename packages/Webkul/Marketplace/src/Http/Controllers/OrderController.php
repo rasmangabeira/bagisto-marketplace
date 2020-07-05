@@ -7,6 +7,7 @@
  */
 
 use Illuminate\Routing\Controller;
+use Webkul\Marketplace\Repositories\SellerOrderRepository;
 
 class OrderController extends Controller{
     
@@ -17,10 +18,18 @@ class OrderController extends Controller{
      */
     protected $_config;
     
-    public function __construct()
+    /**
+     * OrderRepository object
+     *
+     * @var SellerOrderRepository
+     */
+    protected $orderRepository;
+    
+    public function __construct(SellerOrderRepository $orderRepository)
     {
         $this->middleware('customer');
         $this->_config = request('_config');
+        $this->orderRepository = $orderRepository;
     }
     
    /**
@@ -31,6 +40,36 @@ class OrderController extends Controller{
     public function index()
     {
         return view($this->_config['view']);
+    }
+    
+    /**
+     * Show the view for the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\View\View
+     */
+    public function view($id)
+    {
+        $order = $this->orderRepository->findOrFail($id);
+        
+        $invoices = $order->invoices;
+        
+        $invoiceItems = new \Illuminate\Database\Eloquent\Collection();
+        //$invoiceItems = [];
+        foreach ($invoices as $key => $invoice) {
+           
+            $invoiceItems = $invoice->items()->whereHas('order_item', function ($query) use($id){
+                return $query->where('seller_order_id', '=', $id);
+            })->get();
+
+            
+           // $invoiceItems[] = $items;
+   
+           // $invoiceItems->toBase()->merge($items);
+        }
+         //dd($invoiceItems->collect());
+   
+        return view($this->_config['view'], compact('order','invoiceItems'));
     }
     
 }

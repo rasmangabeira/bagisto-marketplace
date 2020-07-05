@@ -1,12 +1,12 @@
 @extends('shop::customers.account.index')
 
 @section('page_title')
-    {{ __('shop::app.customer.account.order.index.page-title') }}
+    {{ __('marketplace::app.product.index.page-title') }}
 @endsection
 
 @section('page-detail-wrapper')
         <a href="{{ route('seller.products.create') }}" class="theme-btn light unset pull-right">
-            Add Product
+            {{ __('marketplace::app.product.index.add-product') }}
         </a>
     <div class="account-head mb-10">
         <span class="back-icon">
@@ -16,7 +16,7 @@
         </span>
 
         <span class="account-heading">
-            {{ __('shop::app.customer.account.order.index.title') }}
+             {{ __('marketplace::app.product.index.page-title') }}
         </span>
     </div>
         <div class="account-items-list">

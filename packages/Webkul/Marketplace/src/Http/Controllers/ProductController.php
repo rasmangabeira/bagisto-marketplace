@@ -3,6 +3,7 @@
 namespace Webkul\Marketplace\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 
 class ProductController extends Controller
@@ -15,16 +16,25 @@ class ProductController extends Controller
     protected $_config;
     
     /**
+     * ProductRepository object
+     *
+     * @var ProductRepository
+     */
+    protected $productRepository;
+    
+    
+    /**
      * AttributeFamilyRepository object
      *
-     * @var \Webkul\Attribute\Repositories\AttributeFamilyRepository
+     * @var AttributeFamilyRepository
      */
     protected $attributeFamilyRepository;
     
-    public function __construct(AttributeFamilyRepository $attributeFamilyRepository)
+    public function __construct(ProductRepository $productRepository,AttributeFamilyRepository $attributeFamilyRepository)
     {
         $this->middleware('customer');
         $this->_config = request('_config');
+        $this->productRepository = $productRepository;
         $this->attributeFamilyRepository = $attributeFamilyRepository;
     }
     
@@ -39,7 +49,7 @@ class ProductController extends Controller
         return view($this->_config['view']);
     }
     
-   /**
+     /**
      * Show the product create form
      *
      * @return \Illuminate\View\View
@@ -50,7 +60,7 @@ class ProductController extends Controller
 
         foreach (config('product_types') as $item) {
             $item['children'] = [];
-
+            
             array_push($items, $item);
         }
 
@@ -62,7 +72,7 @@ class ProductController extends Controller
 
         if ($familyId = request()->get('family')) {
             $configurableFamily = $this->attributeFamilyRepository->find($familyId);
-        }
+}
         return view($this->_config['view'], [
             'productTypes' => $types,
             'families'=>$families,
@@ -70,7 +80,20 @@ class ProductController extends Controller
         ]);
     }
     
-  
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Webkul\Product\Http\Requests\ProductForm  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update($id)
+    {
+        $product = $this->productRepository->update($_POST, $id);
 
+        session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Product']));
 
+        return redirect()->route($this->_config['redirect']);
+    }
+    
 }

@@ -75,4 +75,23 @@ class SellerController extends Controller
 
         return response()->json(['message' => false], 400);
     }
+    
+    
+    /**
+     * To mass delete the customer
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function massDestroy()
+    {
+        $customerIds = explode(',', request()->input('indexes'));
+        
+        foreach ($customerIds as $customerId) {
+            $this->sellerRepository->deleteWhere(['id' => $customerId]);
+        }
+
+        session()->flash('success', trans('admin::app.customers.customers.mass-destroy-success'));
+
+        return redirect()->back();
+    }
 }

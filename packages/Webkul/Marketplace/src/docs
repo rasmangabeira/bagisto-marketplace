@@ -2,3 +2,11 @@
 https://webkul.com/blog/laravel-multi-vendor-marketplace/
 
 https://bagisto.com/en/extensions/laravel-multi-vendor-marketplace/
+
+
+php artisan make:migration create_demo_table --path=packages/ACME/HelloWorld/src/Database/Migrations
+
+ALTER TABLE seller_orders ADD COLUMN YourColumnNameHere decimal(4,2) DEFAULT 0;
+
+201301
+SUGHQJLVGPTB

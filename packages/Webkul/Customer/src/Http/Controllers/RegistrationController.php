@@ -76,9 +76,7 @@ class RegistrationController extends Controller
             'first_name' => 'string|required',
             'last_name'  => 'string|required',
             'email'      => 'email|required|unique:customers,email',
-            'password'   => 'confirmed|min:6|required',
-          //  'url' => 'string|required|min:6|required',
-           // 'url' => 'string|unique:sellers,url'
+            'password'   => 'confirmed|min:6|required'
         ]);
         $data = request()->input();
 

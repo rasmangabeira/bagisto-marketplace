@@ -23,11 +23,8 @@ class MarketplaceServiceProvider extends ServiceProvider{
         
         $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'marketplace');
         
-        Event::listen('customer.registration.after','Webkul\Marketplace\Listeners\Customer@createNewSeller');
-        
-        Event::listen('catalog.product.create.after','Webkul\Marketplace\Listeners\Customer@createNewSellerProduct');
-        
-        Event::listen('customer.registration.before','Webkul\Marketplace\Listeners\Customer@beforeRegistration');
+        $this->app->register(EventServiceProvider::class);
+        $this->composeView();
     }
 
     /**
@@ -43,6 +40,40 @@ class MarketplaceServiceProvider extends ServiceProvider{
         $this->mergeConfigFrom(
             dirname(__DIR__) . '/Config/menu.php', 'menu.customer'
         );
+        
+        $this->mergeConfigFrom(
+            dirname(__DIR__) . '/Config/system.php', 'core'
+        );
+    }
+    
+    
+    
+    /**
+     * Bind the the data to the views
+     *
+     * @return void
+     */
+    protected function composeView()
+    {
+        // in admin when admin edit customer
+        view()->composer('marketplace::admin.customer.commission', function ($view) {
+            $customer = $view->getData()['customer'];
+            $seller = \Webkul\Marketplace\Models\Seller::where('customer_id',$customer->id)->first();
+            $view->with('seller', $seller);
+        });
+        
+        // in front-end  product detail
+        view()->composer('marketplace::product.detail', function ($view) {
+            $product= $view->getData()['product'];
+            $productSeller = \Webkul\Marketplace\Models\SellerProduct::where('product_id',$product->id)->first();
+            if($productSeller){
+                $view->with('is_seller', true);
+                $seller = \Webkul\Marketplace\Models\Seller::where('id',$productSeller->seller_id)->first();
+                $view->with('seller', $seller);
+            }else{
+                $view->with('is_seller', false);
+            }
+        });
     }
 
 }

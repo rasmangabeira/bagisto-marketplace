@@ -155,8 +155,10 @@
                             <div class="form-group" id="shop_div" style="display: none">
                                 <label for="url" class="required">Shop Url</label>
                                 <input type="text" name="url" value="{{ old('url') }}" data-vv-as="&quot;Shop Url&quot;" class="control form-style">
-                                <span class="control-error" v-if="errors.has('url')">
-                                 @{{ errors.first('url') }}
+                                <span class="control-error">
+                                    @if($errors->has('url'))
+                                      {{ $errors->first('url') }}
+                                    @endif
                                 </span>
                             </div>
                         </div>

@@ -23,7 +23,7 @@
     </div>
 
    
-        <form method="post" action="{{ route('seller.products.create') }}" @submit.prevent="onSubmit">
+         <form method="POST" action="" @submit.prevent="onSubmit">
             <input type="hidden" name="is_seller" value="1" />
 
               <div class="account-action"><button type="submit" class="btn btn-lg theme-btn">

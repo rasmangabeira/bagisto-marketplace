@@ -70,5 +70,15 @@ class SellerDataGrid extends DataGrid
             'title'  => trans('admin::app.customers.customers.delete-help-title'),
         ]);
     }
+    
+    public function prepareMassActions()
+    {
+        $this->addMassAction([
+            'type'   => 'delete',
+            'label'  => trans('admin::app.datagrid.delete'),
+            'action' => route('admin.marketplace.sellers.mass-delete'),
+            'method' => 'DELETE',
+        ]);
+    }
 
 }
