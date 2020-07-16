@@ -51,25 +51,35 @@ class OrderController extends Controller{
     public function view($id)
     {
         $order = $this->orderRepository->findOrFail($id);
-        
         $invoices = $order->invoices;
-        
-        $invoiceItems = new \Illuminate\Database\Eloquent\Collection();
-        //$invoiceItems = [];
+        $invoiceItems = [];
         foreach ($invoices as $key => $invoice) {
            
             $invoiceItems = $invoice->items()->whereHas('order_item', function ($query) use($id){
                 return $query->where('seller_order_id', '=', $id);
             })->get();
-
-            
-           // $invoiceItems[] = $items;
-   
-           // $invoiceItems->toBase()->merge($items);
         }
-         //dd($invoiceItems->collect());
-   
-        return view($this->_config['view'], compact('order','invoiceItems'));
+        $invoice_ids = $invoiceItems->pluck('invoice_id')->toArray();
+        
+        if($invoiceItems){
+            $invoiceItems = $invoiceItems->groupBy('invoice_id');
+        }
+        $shipmentItems = $order->shipmentItems($id);
+        
+        $shipment_ids = $shipmentItems->pluck('shipment_id')->toArray();
+        
+        if($shipmentItems){
+            $shipmentItems = $shipmentItems->groupBy('shipment_id');
+            $shipments = $order->shipments($shipment_ids)->get();
+        }
+        
+        $refundItems = $order->refundItems($id);
+        if($refundItems){
+            $refund_ids = $refundItems->pluck('refund_id')->toArray();
+            $refunds = $order->refunds($refund_ids)->get();
+            $refundItems = $refundItems->groupBy('refund_id');
+        }
+        return view($this->_config['view'], compact('order','invoiceItems','shipmentItems','refundItems','invoice_ids','shipments','refunds'));
     }
     
 }

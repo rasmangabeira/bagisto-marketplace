@@ -28,6 +28,18 @@ return [
         'name'  => 'orders',
         'route' =>'seller.orders.index',
         'sort'  => 3,
-        ]
+    ],
+    [
+        'key'   => 'marketplace.transaction',
+        'name'  => 'transactions',
+        'route' =>'seller.transactions.index',
+        'sort'  => 4,
+    ],
+    [
+        'key'   => 'marketplace.dashboard',
+        'name'  => 'dashboard',
+        'route' =>'marketplaceDashboard',
+        'sort'  => 5,
+    ]
   
         ];

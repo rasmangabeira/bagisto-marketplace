@@ -30,7 +30,6 @@ class Customer
     public function createNewSeller($customer)
     {
         if($customer->is_seller){
-          $data['id'] = $customer->id;
           $data['customer_id'] = $customer->id;
           $data['url'] = request('url');
           $this->sellerRepository->create($data);   
@@ -40,15 +39,17 @@ class Customer
     public function createNewSellerProduct($product) {
         if(request('is_seller') == 1){
             $id = auth()->guard('customer')->user()->id;
+            $seller  = \DB::table('sellers')->where('customer_id',$id)->first();
             $data['product_id'] = $product->id;
-            $data['seller_id'] = $id;
+            $data['seller_id'] = $seller->id;
             $this->sellerProductRepository->create($data);  
         }
     }
     
     public function afterCustomerUpdate($customer) {
         if($customer->is_seller && request('commission_percentage')){
-            $seller  = \DB::table('sellers')->where('customer_id',$customer->id)->first();
+            $seller  = \DB::table('sellers')->where('customer_id',$customer->id)
+                    ->first();
             $data['commission_percentage'] = request('commission_percentage');
             $this->sellerRepository->update($data,$seller->id); 
         }
@@ -64,9 +65,7 @@ class Customer
     }
     
     
-    public function afterSaveOrderItem($orderItem) {
-      //  dd($orderItem);
-    }
+  
     
     public function afterSaveOrder($order) {
         $items = $order->items()->get();
@@ -82,24 +81,9 @@ class Customer
                 $ordersItems[$item->id] = $seller_prod->seller_id;
                 $isThereSeller = true;
                 $net_total = $item->total;
-                
-                // check if item has discount or not
-                
-                // check if item has tax
-                if($item->tax_amount != 0){
-                    $net_total = $net_total + $item->tax_amount;
-                }
-                
-                if($item->shipping_amount != 0){
-                   // $net_total = $net_total + $item->shipping_amount;//TODO
-                }
-                
-                if($item->discount_amount != 0){
-                    //dont worry i get this from item per product not from all orders
-                    $net_total = $net_total - $item->discount_amount;
-                }
+                $grand_total = $item->total + $item->tax_amount - $item->discount_amount;
                 if(isset($sellers_item[$seller_prod->seller_id])){
-                    $grand_total  = $sellers_item[$seller_prod->seller_id]['grand_total'] + $net_total;
+                    $grand_total  = $sellers_item[$seller_prod->seller_id]['grand_total'] + $grand_total;
                     $discount_amount  = $sellers_item[$seller_prod->seller_id]['discount_amount'] + $item->discount_amount; 
                     $tax_amount  = $sellers_item[$seller_prod->seller_id]['tax_amount'] + $item->tax_amount;
                     $total_qty_ordered  = $sellers_item[$seller_prod->seller_id]['total_qty_ordered'] + $item->qty_ordered;
@@ -108,7 +92,6 @@ class Customer
                     $sub_total =  $sellers_item[$seller_prod->seller_id]['sub_total'] + $item->total;
                     $base_sub_total =  $sellers_item[$seller_prod->seller_id]['base_sub_total'] + $item->base_total;    
                 }else{
-                    $grand_total = $net_total;
                     $discount_amount = $item->discount_amount;
                     $tax_amount = $item->tax_amount;
                     $total_qty_ordered = $item->qty_ordered;
@@ -152,6 +135,8 @@ class Customer
                 $sellers_item[$key]['customer_email'] = $order->customer_email;
                 $sellers_item[$key]['customer_first_name'] = $order->customer_first_name;
                 $sellers_item[$key]['customer_last_name'] = $order->customer_last_name;
+                $sellers_item[$key]['customer_id'] = $order->customer_id;
+                $sellers_item[$key]['created_at'] = $order->created_at;
                 $sellers_item[$key]['shipping_method'] = $order->shipping_method;
                 $sellers_item[$key]['shipping_title'] = $order->shipping_title;
                 $sellers_item[$key]['shipping_description'] = $order->shipping_description;
@@ -160,8 +145,10 @@ class Customer
                 $sellers_item[$key]['customer_company_name'] = $order->customer_company_name;
                 $sellers_item[$key]['is_guest'] = $order->is_guest;
                 $sellers_item[$key]['state'] = $order->status;
+                $sellers_item[$key]['commission_percent'] = $admin_commission;
                 
                 
+                //created_at
    
                 $id = $this->sellerOrderRepository->insertGetId($sellers_item[$key]);
                 $keys = array_keys ($ordersItems,$seller_item['seller_id']);
@@ -285,6 +272,8 @@ class Customer
             $sellerOrder->tax_amount_refunded = $sellerOrder->tax_amount_refunded+$tax_amount;
             $sellerOrder->base_tax_amount_refunded = $sellerOrder->base_tax_amount_refunded+$tax_amount;
             
+            // as demo version if one qty is refuned no pay to seller[maybe bug]
+            $sellerOrder->status = 'Refunded';
             $sellerOrder->save();
         }
     }

@@ -34,7 +34,7 @@ class OrderDataGrid extends DataGrid
            
                 
                 
-            ->addSelect('order.id as order_id','order_seller.grand_total','order.customer_first_name','order.status','order.created_at','customer.first_name as seller_name','order_seller.commission as commission','order_seller.seller_total as seller_total','order_seller.discount_amount as discount','order_seller.seller_id','order_seller.id as seller_order_id','order_seller.total_paid as paid',DB::raw('order_seller.seller_total_invoiced-order_seller.total_paid as remaining'),'order_seller.seller_total_invoiced as invoiced','order_seller.status as order_status')
+            ->addSelect('order.id as order_id','order_seller.grand_total','order.customer_first_name','order.status','order.created_at','order_seller.commission as commission','order_seller.seller_total as seller_total','order_seller.discount_amount as discount','order_seller.seller_id','order_seller.id as seller_order_id','order_seller.total_paid as paid',DB::raw('order_seller.seller_total_invoiced-order_seller.total_paid as remaining'),'order_seller.seller_total_invoiced as invoiced','order_seller.status as order_status',DB::raw('concat(customer.first_name," ",customer.last_name) as seller_name'))
                 
            ;    
    
@@ -178,7 +178,7 @@ class OrderDataGrid extends DataGrid
             'wrapper'    => function ($value) {
             if($value->order_status == 'Pay')  {  
             
-                  return '<button id="pay_button" data-id="'.$value->seller_order_id.'" seller-id="'.$value->seller_id.'" class="btn btn-sm btn-primary pay-btn" data-remaining="'.$value->remaining.'"  data-seller-total="'.$value->seller_total.'">Pay</button>';
+                  return '<button id="pay_button" data-id="'.$value->seller_order_id.'" seller-id="'.$value->seller_id.'" class="btn btn-sm btn-primary pay-btn" data-remaining="'.$value->remaining.'"  data-seller-total="'.$value->seller_total.'" data-seller-name="'.$value->seller_name.'">Pay</button>';
             }else{
                 return $value->order_status;
             }
@@ -187,5 +187,14 @@ class OrderDataGrid extends DataGrid
         
         
        
+    }
+    
+    public function prepareActions() {
+        $this->addAction([
+            'title'  => trans('admin::app.datagrid.view'),
+            'method' => 'GET',
+            'route'  => 'admin.sales.orders.view',
+            'icon'   => 'icon eye-icon',
+        ]);
     }
 }

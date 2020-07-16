@@ -43,6 +43,7 @@ class CreateSellerOrdersTable extends Migration
             $table->decimal('base_seller_total', 12, 4)->default(0)->nullable();
             $table->decimal('base_commission', 12, 4)->default(0)->nullable();
             $table->decimal('commission', 12, 4)->default(0)->nullable();
+            $table->decimal('commission_percent', 12, 4)->default(0)->nullable();
             $table->decimal('discount_percent', 12, 4)->default(0)->nullable();
             $table->decimal('discount_amount', 12, 4)->default(0)->nullable();
             $table->decimal('base_discount_amount', 12, 4)->default(0)->nullable();
@@ -77,6 +78,10 @@ class CreateSellerOrdersTable extends Migration
             $table->decimal('base_tax_amount_refunded', 12, 4)->default(0)->nullable();
             $table->decimal('shipping_refunded', 12, 4)->default(0)->nullable();
             $table->decimal('base_shipping_refunded', 12, 4)->default(0)->nullable();
+            
+            $table->integer('customer_id')->unsigned()->nullable();
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('set null');
+            
             $table->timestamp('created_at')->nullable();
             //
         });

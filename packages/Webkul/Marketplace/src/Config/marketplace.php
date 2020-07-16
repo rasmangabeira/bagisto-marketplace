@@ -44,7 +44,7 @@ return [
     [
         'key'        => 'marketplace.transactions',
         'name'       => 'Transactions',
-        'route'      => 'admin.marketplace.sellers.index',
+        'route'      => 'admin.marketplace.transactions.index',
         'sort'       => 5,
         'icon-class' => '',
     ]

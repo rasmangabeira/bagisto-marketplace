@@ -94,4 +94,14 @@ class SellerController extends Controller
 
         return redirect()->back();
     }
+    
+    public function massUpdate() {
+        $customerIds = explode(',', request()->input('indexes'));
+        foreach ($customerIds as $customerId) {
+            $this->sellerRepository->update(['bo_status' => request()->input('update-options')],$customerId);
+        }
+        session()->flash('success', trans('admin::app.customers.customers.mass-destroy-success'));
+
+        return redirect()->back();
+    }
 }

@@ -46,6 +46,7 @@ class CreateSellerTable extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             
             $table->decimal('commission_percentage', 12, 4)->nullable();
+            $table->boolean('bo_status')->default(0);
 
             $table->timestamps();
         });

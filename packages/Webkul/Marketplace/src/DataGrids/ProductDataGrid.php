@@ -15,12 +15,14 @@ class ProductDataGrid extends DataGrid
     
     public function prepareQueryBuilder()
     {
+        $cus_id = auth()->guard('customer')->user()->id;
+        $seller  = \DB::table('sellers')->where('customer_id',$cus_id)->first();
         $queryBuilder = DB::table('products as prod')
             ->join('seller_products as prod_seller', 'prod.id', '=', 'prod_seller.product_id')
             ->join('product_flat as prod_flat', 'prod.id', '=', 'prod_flat.product_id')
             ->leftjoin('product_inventories as prod_inventories', 'prod.id', '=', 'prod_inventories.product_id')    
             ->addSelect('prod.id as prod_id','prod.sku', 'prod_flat.name as product_name', 'prod_flat.price as product_price','prod_inventories.qty as product_qty')
-            ->where('prod_seller.seller_id', auth()->guard('customer')->user()->id);    
+            ->where('prod_seller.seller_id', $seller->id);    
    
 
         $this->addFilter('prod_id','prod.id');
@@ -77,14 +79,14 @@ class ProductDataGrid extends DataGrid
             'title'  => trans('admin::app.datagrid.edit'),
             'method' => 'GET',
             'route'  => 'seller.products.edit',
-            'icon'   => 'icon eye-icon',
+            'icon'   => 'rango-edit-pencil',
         ]);
         $this->addAction([
             'title'        => trans('admin::app.datagrid.delete'),
             'method'       => 'POST',
             'route'        => 'admin.catalog.products.delete',
             'confirm_text' => trans('ui::app.datagrid.massaction.delete', ['resource' => 'address']),
-            'icon'   => 'icon eye-icon',
+            'icon'   => 'rango-delete',
         ]);
     }
     

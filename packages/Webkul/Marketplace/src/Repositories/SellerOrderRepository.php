@@ -11,5 +11,9 @@ class SellerOrderRepository extends Repository
     }
     
     
+     public function getOrderInfo($id) {
+        return $this->find($id,['commission','sub_total','tax_amount','seller_total']);   
+    }
+    
 
 }

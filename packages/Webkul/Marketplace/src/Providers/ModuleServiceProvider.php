@@ -10,6 +10,7 @@ class ModuleServiceProvider extends BaseModuleServiceProvider
         \Webkul\Marketplace\Models\Seller::class,
         \Webkul\Marketplace\Models\SellerProduct::class,
         \Webkul\Marketplace\Models\SellerOrder::class,
-        \Webkul\Marketplace\Models\SellerInvoice::class
+        \Webkul\Marketplace\Models\SellerInvoice::class,
+        \Webkul\Marketplace\Models\OrderItem::class
     ];
 }

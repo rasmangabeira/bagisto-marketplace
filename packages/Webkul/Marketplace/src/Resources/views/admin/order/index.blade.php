@@ -1,14 +1,14 @@
 @extends('admin::layouts.content')
 
 @section('page_title')
-    {{ __('marketplace::app.admin.product.title') }}
+    {{ __('order') }}
 @stop
 
 @section('content')
     <div class="content">
         <div class="page-header">
             <div class="page-title">
-                <h1>{{ __('marketplace::app.admin.product.title') }}</h1>
+                <h1>{{ __('order') }}</h1>
             </div>
         </div>
 
@@ -31,6 +31,8 @@
                             <input type="hidden" name="seller_id" :value="seller_id"/>
                             <input type="hidden" name="remaining" :value="remaining"/>
                             <input type="hidden" name="seller_total" :value="seller_total"/>
+                            <input type="hidden" name="seller_name" :value="seller_name"/>
+                                
 
 
 
@@ -63,7 +65,8 @@
                 order_id: null,
                 seller_id: null,
                 remaining: null,
-                seller_total: null
+                seller_total: null,
+                seller_name: null
             }),
 
             created() {
@@ -75,6 +78,7 @@
                         this_this.seller_id = $(e.target).attr('seller-id');
                         this_this.remaining = $(e.target).attr('data-remaining');
                         this_this.seller_total = $(e.target).attr('data-seller-total');
+                        this_this.seller_name = $(e.target).attr('data-seller-name');
                         this_this.$root.$root.showModal('payForm')
                     });
                 });

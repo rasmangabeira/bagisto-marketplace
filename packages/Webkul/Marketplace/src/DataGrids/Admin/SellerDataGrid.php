@@ -50,12 +50,20 @@ class SellerDataGrid extends DataGrid
             'sortable'   => true,
             'filterable' => true,
         ]);
+        $this->addColumn([
+            'index'      => 'bo_status',
+            'label'      => 'Is Approved',
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => true,
+            'filterable' => true,
+        ]);
     }
 
     public function prepareQueryBuilder() {
         $queryBuilder = DB::table('sellers as sel')
             ->join('customers as cust', 'cust.id', '=', 'sel.customer_id')
-            ->addSelect('sel.id as sel_id','sel.shop_title','cust.email','sel.created_at');   
+            ->addSelect('sel.id as sel_id','sel.shop_title','cust.email','sel.created_at','sel.bo_status');   
 
         $this->addFilter('sel_id', 'sel.id');
         $this->setQueryBuilder($queryBuilder);
@@ -78,6 +86,18 @@ class SellerDataGrid extends DataGrid
             'label'  => trans('admin::app.datagrid.delete'),
             'action' => route('admin.marketplace.sellers.mass-delete'),
             'method' => 'DELETE',
+        ]);
+
+        
+        $this->addMassAction([
+            'type'    => 'update',
+            'label'   => trans('admin::app.datagrid.update-status'),
+            'action'  => route('admin.marketplace.sellers.mass-update'),
+            'method'  => 'PUT',
+            'options' => [
+                'Approve'   => 1,
+                'Unapprove' => 0,
+            ],
         ]);
     }
 

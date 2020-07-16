@@ -15,12 +15,14 @@ class OrderDataGrid extends DataGrid
     
     public function prepareQueryBuilder()
     {
+        $cus_id = auth()->guard('customer')->user()->id;
+        $seller  = \DB::table('sellers')->where('customer_id',$cus_id)->first();
         $queryBuilder = 
                 DB::table('seller_orders as order_seller')
             ->join('orders as order', 'order.id', '=', 'order_seller.order_id')    
             ->addSelect('order_seller.id as order_id','order_seller.grand_total','order_seller.sub_total','order.created_at','order.status','order.customer_first_name')
                 
-            ->where('order_seller.seller_id', auth()->guard('customer')->user()->id); 
+            ->where('order_seller.seller_id', $seller->id); 
         $this->addFilter('order_id','order.id');
         $this->setQueryBuilder($queryBuilder);
     }
@@ -93,6 +95,17 @@ class OrderDataGrid extends DataGrid
             'searchable' => false,
             'sortable'   => true,
             'filterable' => true,
+        ]);
+    }
+    
+    
+     public function prepareActions()
+    {
+        $this->addAction([
+            'title'  => trans('admin::app.datagrid.view'),
+            'method' => 'GET',
+            'route'  => 'seller.orders.view',
+            'icon'   => 'icon eye-icon',
         ]);
     }
 }

@@ -4,9 +4,12 @@ namespace Webkul\Marketplace\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Webkul\Marketplace\Repositories\SellerRepository;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Mail;
 
 class SellerController extends Controller
 {
+    use ValidatesRequests;
     /**
      * Display a listing of the resource.
      *
@@ -46,8 +49,12 @@ class SellerController extends Controller
     public function index($url)
     {
         $seller = $this->sellerRepository->findOneWhere(['url'=>$url]);
+        $count = \DB::table('seller_products')
+                     ->select(\DB::raw('count(*) as count'))
+                     ->where('seller_id',$seller->id)
+                     ->first();
      
-        return view('marketplace::profile.index',['seller'=>$seller]);
+        return view('marketplace::profile.index',['seller'=>$seller,'productCount'=>$count->count]);
     }
 
     
@@ -87,5 +94,9 @@ class SellerController extends Controller
             return redirect()->back($this->_config['redirect']);
         }
     }
-
+    
+    public function contact() {
+        Mail::queue(new \Webkul\Marketplace\Mail\ContactSellerEmail([]));
+    }
+    
 }

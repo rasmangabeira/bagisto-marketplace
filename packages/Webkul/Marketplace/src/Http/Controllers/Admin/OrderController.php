@@ -66,7 +66,9 @@ class OrderController extends Controller{
             'base_grand_total'=>$data['remaining'],
             'transaction_id'=>time() . '-' . $data['seller_id'],
             'comment'=>$data['comment'],
-            'seller_id'=>$data['seller_id']
+            'seller_id'=>$data['seller_id'],
+            'seller_name'=>$data['seller_name'],
+            'payment_method'=>'manual'
         ];
         
         $this->sellerInvoiceRepository->create($param);
@@ -86,6 +88,8 @@ class OrderController extends Controller{
                     'total_paid'=>$finalAmmount
                     ],$data['order_id']);
         //}
+        
+        return redirect()->back();
         
     }
     

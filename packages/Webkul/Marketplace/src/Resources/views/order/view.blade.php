@@ -5,6 +5,8 @@
 @endsection
 
 @section('page-detail-wrapper')
+<div class="account-content">
+    <div class="account-layout">
 <div class="account-head">
     
 </div>
@@ -29,7 +31,7 @@
                                     </td></tr> <tr><td>
                                         Customer Name
                                     </td> <td>
-                                         {{$order->customer_first_name}}
+                                         {{$order->customer_first_name}} {{$order->customer_last_name}}
                                     </td></tr> <tr><td>
                                         Email
                                     </td> <td>
@@ -44,9 +46,19 @@
                     <div class="section-content">
                         <div class="table">
                             <table>
-                                <thead><tr><th>SKU</th> <th>Name</th> <th>Price</th> <th>Item Status</th>  <th>Discount</th>   <th>Tax Amount</th> </tr></thead>
-                                
-                                
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Item Status</th>
+                                        <th>Subtotal</th>
+                                        <th>Discount</th>
+                                        <th>Admin Commission</th>
+                                        <th>Tax Amount</th>
+                                        <th>Grand Total</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                      @foreach($order->items as  $orderItem)
                                      <tr>
@@ -67,8 +79,11 @@
                                                 refunded({{$orderItem->qty_refunded}})
                                              @endif
                                          </td>
+                                         <td>{{$orderItem->total}}</td>
                                          <td>{{$orderItem->discount_amount}}</td>
+                                         <td>{{$orderItem->getCommissionAttribute($order->commission_percent)}}</td>
                                          <td>{{$orderItem->tax_amount}}</td>
+                                         <td>{{$orderItem->grand_total}}</td>
                                      </tr>
                                      @endforeach
                                 </tbody>
@@ -115,19 +130,25 @@
                 </div>
             </tab>
             
-            
-            <tab name="{{ __('shop::app.customer.account.order.view.info') }}" >
+            @if ($order->invoices->count())
+            <tab name="{{ __('Invoices') }}" >
+                
+                
+               @foreach($invoice_ids as $invoice_id) 
+                
+                
                 <div class="sale-section">
-                    <div class="secton-title"><span>Invoice #11</span> <a href="https://demo.bagisto.com/marketplace-141-105-61-104/marketplace/account/sales/invoices/print/12" class="pull-right">
+                    <div class="secton-title"><span>Invoice #{{$invoice_id}}</span>
+                        <a href="{{route('seller.printinvoice',$invoice_id)}}?order={{$order->id}}" class="pull-right">
                             Print
                         </a>
                     </div>
                     <div class="section-content">
                         <div class="table">
                             <table>
-                                <thead><tr><th>Name</th> <th>Price</th> <th>Qty</th> <th>Subtotal</th> <th>Tax Amount</th> <th>Discount</th> </tr></thead> <tbody>
+                                <thead><tr><th>Name</th> <th>Price</th> <th>Qty</th> <th>Subtotal</th> <th>Tax Amount</th> <th>Discount</th><th>Grand Total</th> </tr></thead> <tbody>
                                     
-                                    @foreach($invoiceItems as  $invoiceItem)
+                                    @foreach($invoiceItems[$invoice_id] as  $invoiceItem)
                                     
                                        <tr>
                                         <td data-value="Name">
@@ -136,7 +157,9 @@
                                         <td data-value="Price">
                                              {{$invoiceItem->price}}
                                         </td>
-                                        <td data-value="Qty">3</td>
+                                        <td data-value="Qty">
+                                            {{$invoiceItem->qty}}
+                                        </td>
                                         <td data-value="Subtotal">
                                             {{$invoiceItem->total}}
                                         </td>
@@ -145,6 +168,9 @@
                                         </td>
                                         <td data-value="Discount">
                                             {{$invoiceItem->discount_amount}}
+                                        </td>
+                                        <td data-value="Grand Total">
+                                            {{$invoiceItem->total + $invoiceItem->tax_amount}}
                                         </td>
                                     </tr>
                                     @endforeach
@@ -156,8 +182,96 @@
                     </div>
                     
                 </div>
+               @endforeach
              </tab>
-            
+            @endif
+            @if ($shipmentItems->count())
+            <tab name="{{ __('Shipments') }}">
+                @foreach($shipments as $shipment) 
+                <div class="sale-section">
+                    <div class="section-title"><span>Shipment #{{$shipment->id}}</span></div>
+                    <div class="section-content">
+                        <div class="table">
+                            <table>
+                                <tbody><tr><th>Inventory Source</th> <td>{{$shipment->inventory_source_name}}</td></tr> <tr><th>Carrier Title</th> <td>{{$shipment->carrier_title}}</td></tr> <tr><th>
+                                            Tracking Number
+                                        </th> <td>
+                                            <a class="zulu-dial zulu-tel-to-dial" href="tel:{{$shipment->track_number}}" data-zulu-num="{{$shipment->track_number}}" data-dial-id="0">{{$shipment->track_number}}&nbsp;<span class="zulu-icon-phone"></span></a>
+                                        </td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table" style="margin-top: 20px;">
+                            <table>
+                                <thead>
+                                    <tr><th>SKU</th> <th>Name</th> <th>Qty</th></tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($shipmentItems[$shipment->id] as $shipmentItem)
+                                    <tr>
+                                        <td>{{$shipmentItem->sku}}</td>
+                                        <td>{{$shipmentItem->name}}</td>
+                                        <td>{{$shipmentItem->qty}}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </tab>
+             @endif
+             @if ($refundItems->count())
+            <tab name="{{ __('Refunds') }}">
+                @foreach($refunds as $refund)
+                <div class="sale-section">
+                    <div class="section-title"><span>Refund #{{$refund->id}}</span></div>
+                    <div class="section-content">
+                        <div class="table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Sub Total</th>
+                                        <th>Tax Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($refundItems[$refund->id] as $refundItem)
+                                    <tr>
+                                        <td>{{$refundItem->sku}}</td>
+                                        <td>{{$refundItem->name}}</td>
+                                        <td>{{$refundItem->price}}</td>
+                                        <td>{{$refundItem->qty}}</td>
+                                        <td>{{$refundItem->total}}</td>
+                                        <td>{{$refundItem->tax_amount}}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="totals">
+                            <table class="sale-summary">
+                                <tbody>
+                                    <tr><td>Subtotal
+                                                        <span class="dash-icon">-</span></td> <td>{{$refund->sub_total}}</td></tr>
+                                    <tr><td>Adjustment Refund
+                                                        <span class="dash-icon">-</span></td> <td>{{$refund->adjustment_refund}}</td></tr>
+                                    <tr><td>Adjustment Fee
+                                                        <span class="dash-icon">-</span></td> <td>{{$refund->adjustment_fee}}</td></tr> 
+                                    <tr class="fw6"><td>Grand Total
+                                                        <span class="dash-icon">-</span></td> <td>{{$refund->grand_total}}</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </tab>
+               @endif
               </tabs>
             
             <div class="sale-section"><div class="section-content" style="border-bottom: 0px none;"><div class="order-box-container"><div class="box"><div class="box-title">
@@ -197,4 +311,5 @@
        
     
 </div>
+</div></div>
 @endsection

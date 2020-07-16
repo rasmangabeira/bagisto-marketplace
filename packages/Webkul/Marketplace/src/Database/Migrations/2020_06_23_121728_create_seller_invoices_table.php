@@ -27,6 +27,9 @@ class CreateSellerInvoicesTable extends Migration
             $table->foreign('seller_id')->references('id')
                     ->on('sellers')->onDelete('cascade');
             
+            $table->string('seller_name')->nullable();
+            $table->string('payment_method')->nullable();
+            
            
             
             $table->timestamps();
