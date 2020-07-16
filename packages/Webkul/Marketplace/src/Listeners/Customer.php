@@ -80,8 +80,7 @@ class Customer
             if($seller_prod){
                 $ordersItems[$item->id] = $seller_prod->seller_id;
                 $isThereSeller = true;
-                $net_total = $item->total;
-                $grand_total = $item->total + $item->tax_amount - $item->discount_amount;
+                $grand_total = $item->total + $item->tax_amount + $item->shipping_amount - $item->discount_amount;
                 if(isset($sellers_item[$seller_prod->seller_id])){
                     $grand_total  = $sellers_item[$seller_prod->seller_id]['grand_total'] + $grand_total;
                     $discount_amount  = $sellers_item[$seller_prod->seller_id]['discount_amount'] + $item->discount_amount; 
@@ -122,7 +121,7 @@ class Customer
             foreach ($sellers_item as $key=>$seller_item) {
                 $admin_commission = $this->sellerRepository->getAdminCommission($seller_item['seller_id']);
                 
-                $base_commission = ($admin_commission/100) * $seller_item['grand_total'];
+                $base_commission = ($admin_commission/100) * $seller_item['sub_total'];
                 
                 $sellers_item[$key]['base_commission'] = $base_commission;
                 $sellers_item[$key]['commission'] = $base_commission;
@@ -130,8 +129,9 @@ class Customer
                 $sellers_item[$key]['base_seller_total'] = $seller_item['grand_total'] -$base_commission;
                 
                 $sellers_item[$key]['status'] = 'Invoice Pending';
-                
                 $sellers_item[$key]['channel_name'] = $order->channel_name;
+                $sellers_item[$key]['shipping_amount'] = $order->shipping_amount;
+                $sellers_item[$key]['base_shipping_amount'] = $order->base_shipping_amount;
                 $sellers_item[$key]['customer_email'] = $order->customer_email;
                 $sellers_item[$key]['customer_first_name'] = $order->customer_first_name;
                 $sellers_item[$key]['customer_last_name'] = $order->customer_last_name;
@@ -209,9 +209,8 @@ class Customer
                 }
             }
             if($updateOrder){
-                $x = $sellerOrder->grand_total_invoiced+$grand_total_invoiced;
-                $admin_commission = $this->sellerRepository
-                        ->getAdminCommission($sellerOrder->seller_id);
+                $x = $sellerOrder->sub_total_invoiced+$sub_total_invoiced;
+                $admin_commission = $sellerOrder->commission_percent;
                
                 $base_commission = ($admin_commission/100) * $x;
                 $this->sellerOrderRepository->update([
@@ -223,6 +222,8 @@ class Customer
                     'base_discount_invoiced'=>$sellerOrder->base_discount_invoiced+$discount_amount,
                     'tax_amount_invoiced'=>$sellerOrder->tax_amount_invoiced+$tax_amount_invoiced,
                     'base_tax_amount_invoiced'=>$sellerOrder->base_tax_amount_invoiced+$tax_amount_invoiced,
+                    'shipping_invoiced'=>$sellerOrder->shipping_invoiced+$invoice->shipping_amount,
+                    'base_shipping_invoiced'=>$sellerOrder->base_shipping_invoiced+$invoice->shipping_amount,
                     'seller_total_invoiced'=>$x-$base_commission,
                     'base_seller_total_invoiced'=>$x-$base_commission,
                     'status'=>'Pay'
@@ -271,6 +272,11 @@ class Customer
             
             $sellerOrder->tax_amount_refunded = $sellerOrder->tax_amount_refunded+$tax_amount;
             $sellerOrder->base_tax_amount_refunded = $sellerOrder->base_tax_amount_refunded+$tax_amount;
+            
+            
+            
+            $sellerOrder->shipping_refunded = $sellerOrder->shipping_refunded+$refund->shipping_amount;
+            $sellerOrder->base_shipping_refunded = $sellerOrder->base_shipping_refunded+$refund->base_shipping_amount;
             
             // as demo version if one qty is refuned no pay to seller[maybe bug]
             $sellerOrder->status = 'Refunded';

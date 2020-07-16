@@ -6,7 +6,7 @@ https://bagisto.com/en/extensions/laravel-multi-vendor-marketplace/
 
 php artisan make:migration create_demo_table --path=packages/ACME/HelloWorld/src/Database/Migrations
 
-ALTER TABLE seller_orders ADD COLUMN YourColumnNameHere decimal(4,2) DEFAULT 0;
+ALTER TABLE seller_orders ADD COLUMN YourColumnNameHere decimal(12,4) DEFAULT 0;
 
 colorful bangles
 https://demo.bagisto.com/marketplace-141-105-61-104/products/18/offers
@@ -14,7 +14,7 @@ https://demo.bagisto.com/marketplace-141-105-61-104/products/18/offers
 201301
 SUGHQJLVGPTB
 
-
+big question commission from grand or total
 
 [1- if buy 2 qty[1 product] for marketplace and one is refunded the order pay button hidden and pay is : Refunded : ]
 2- if by 2 product for marketplace and one is refunded the order pay button hidden and pay is : Refunded :

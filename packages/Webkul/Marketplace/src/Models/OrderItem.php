@@ -10,7 +10,7 @@ class OrderItem extends \Webkul\Sales\Models\OrderItem implements \Webkul\Market
     
     public function getCommissionAttribute($commission_percent)
     {
-        return ($commission_percent/100) * $this->grand_total;
+        return ($commission_percent/100) * $this->total;
     }
     
     public function getSellerTotalAttribute()

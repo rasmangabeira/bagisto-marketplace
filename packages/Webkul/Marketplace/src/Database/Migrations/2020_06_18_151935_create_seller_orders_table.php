@@ -66,6 +66,8 @@ class CreateSellerOrdersTable extends Migration
             
             $table->decimal('seller_total_invoiced', 12, 4)->default(0)->nullable();
             $table->decimal('base_seller_total_invoiced', 12, 4)->default(0)->nullable();
+            $table->decimal('shipping_invoiced', 12, 4)->default(0)->nullable();
+            $table->decimal('base_shipping_invoiced', 12, 4)->default(0)->nullable();
             $table->decimal('total_paid',12,4)->default(0)->nullable();
             
             $table->decimal('grand_total_refunded', 12, 4)->default(0)->nullable();
