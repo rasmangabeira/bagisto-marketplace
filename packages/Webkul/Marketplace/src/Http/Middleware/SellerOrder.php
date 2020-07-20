@@ -8,21 +8,20 @@
 
 use Closure;
 
-class SellerProduct{
+class SellerOrder{
     
     public function handle($request, Closure $next)
     {
-        $product_id = $request->route()->parameter('id');
+        $order_id = $request->route()->parameter('id');
         $id = auth()->guard('customer')->user()->id;
         
         $seller  = \DB::table('sellers')->where('customer_id',$id)->first();
-        
-        $prod  = \DB::table('seller_products')->select('id')->where([
+  
+        $res  = \DB::table('seller_orders')->select('id')->where([
             'seller_id'=>$seller->id,
-            'product_id'=>$product_id
+            'id'=>$order_id
         ])->first();
-
-        if (!$prod) {
+        if (!$res) {
             throw new \Exception('i will kill you');
         } 
         return $next($request);

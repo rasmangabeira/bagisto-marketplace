@@ -52,24 +52,23 @@ class OrderController extends Controller{
     {
         $order = $this->orderRepository->findOrFail($id);
         $invoices = $order->invoices;
-        $invoiceItems = [];
+
+        $invoicesItems = $invoice_ids = [];
         foreach ($invoices as $key => $invoice) {
            
-            $invoiceItems = $invoice->items()->whereHas('order_item', function ($query) use($id){
+            $invoicesItems = $invoice->items()->whereHas('order_item', function ($query) use($id){
                 return $query->where('seller_order_id', '=', $id);
             })->get();
         }
-        $invoice_ids = $invoiceItems->pluck('invoice_id')->toArray();
-        
-        if($invoiceItems){
-            $invoiceItems = $invoiceItems->groupBy('invoice_id');
+        if($invoicesItems){
+            $invoicesItems = $invoicesItems->groupBy('invoice_id');
         }
+        
         $shipmentItems = $order->shipmentItems($id);
-        
-        $shipment_ids = $shipmentItems->pluck('shipment_id')->toArray();
-        
+
         if($shipmentItems){
             $shipmentItems = $shipmentItems->groupBy('shipment_id');
+            $shipment_ids = $shipmentItems->pluck('shipment_id')->toArray();
             $shipments = $order->shipments($shipment_ids)->get();
         }
         
@@ -79,7 +78,7 @@ class OrderController extends Controller{
             $refunds = $order->refunds($refund_ids)->get();
             $refundItems = $refundItems->groupBy('refund_id');
         }
-        return view($this->_config['view'], compact('order','invoiceItems','shipmentItems','refundItems','invoice_ids','shipments','refunds'));
+        return view($this->_config['view'], compact('order','invoicesItems','shipmentItems','refundItems','shipments','refunds'));
     }
     
 }

@@ -104,7 +104,7 @@
                                     <tr>
                                         <td>Shipping &amp; Handling
                                             <span class="dash-icon">-</span>
-                                        </td> <td>$10.00</td>
+                                        </td> <td>{{$order->shipping_amount}}</td>
                                     </tr>
                                     <tr><td>Discount
                                             <span class="dash-icon">-</span></td> <td>{{$order->discount_amount}}</td></tr> 
@@ -116,8 +116,7 @@
                                             <span class="dash-icon">-</span></td> <td>{{$order->total_paid}}</td></tr> 
                                     <tr class="bold"><td>Total Refunded
                                             <span class="dash-icon">-</span></td> <td>{{$order->sub_total_refunded}}</td></tr> 
-                                    <tr class="bold"><td>Total Due
-                                            <span class="dash-icon">-</span></td> <td>$0.00</td></tr> 
+                                 
                                     <tr class="bold"><td> Total Seller Amount
                                         </td> <td>{{$order->seller_total}}</td></tr>
                                     
@@ -130,11 +129,11 @@
                 </div>
             </tab>
             
-            @if ($order->invoices->count())
+            @if ($invoicesItems->count())
             <tab name="{{ __('Invoices') }}" >
                 
                 
-               @foreach($invoice_ids as $invoice_id) 
+               @foreach($invoicesItems as $invoice_id => $invoiceItems) 
                 
                 
                 <div class="sale-section">
@@ -148,7 +147,7 @@
                             <table>
                                 <thead><tr><th>Name</th> <th>Price</th> <th>Qty</th> <th>Subtotal</th> <th>Tax Amount</th> <th>Discount</th><th>Grand Total</th> </tr></thead> <tbody>
                                     
-                                    @foreach($invoiceItems[$invoice_id] as  $invoiceItem)
+                                    @foreach($invoiceItems as  $invoiceItem)
                                     
                                        <tr>
                                         <td data-value="Name">

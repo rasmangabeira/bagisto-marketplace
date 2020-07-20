@@ -56,24 +56,18 @@ $isDisplayMode = 1;
             <div class="category-container right">
                 <div class="row remove-padding-margin">
                     <div class="pl0 col-12">
-                        <h1 class="fw6 mb10">{{ $category->name }}</h1>
+                        <h1 class="fw6 mb10"></h1>
     
                         @if ($isDisplayMode)
                             <template v-if="products.length > 0">
-                                @if ($category->description)
-                                    <div class="category-description">
-                                        {!! $category->description !!}
-                                    </div>
-                                @endif
+                              
                             </template>
                         @endif
                     </div>
     
                     <div class="col-12 no-padding">
                         <div class="hero-image">
-                            @if (!is_null($category->image))
-                                <img class="logo" src="{{ $category->image_url }}" />
-                            @endif
+                            
                         </div>
                     </div>
                 </div>
@@ -83,10 +77,7 @@ $isDisplayMode = 1;
                 </div>
     
                 <div
-                    class="category-block"
-                    @if ($category->display_mode == 'description_only')
-                        style="width: 100%"
-                    @endif>
+                    class="category-block">
 
                     @if ($isDisplayMode)
                         <shimmer-component v-if="isLoading && !isMobile()" shimmer-count="4"></shimmer-component>

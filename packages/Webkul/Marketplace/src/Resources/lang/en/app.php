@@ -48,9 +48,9 @@ return [
                 'media'=>'Media',
                 'logo'=>'Logo',
                 'banner'=>'Banner',
-                ''=>'',
-                ''=>'',
-                ''=>'',
+                'Social Links'=>'Social Links',
+                'About Shop'=>'About Shop',
+                'SEO'=>'SEO',
             ]
         ]
     ]

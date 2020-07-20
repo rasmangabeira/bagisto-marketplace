@@ -113,10 +113,12 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
             ->defaults('_config', [
                     'view' => 'marketplace::order.view'
              ])
-            ->name('seller.orders.view');
+            ->name('seller.orders.view')->middleware(\Webkul\Marketplace\Http\Middleware\SellerOrder::class);
      
      
-     Route::get('marketplace/seller/profile/{url}', 'Webkul\Marketplace\Http\Controllers\SellerController@index')->name('seller.profile.index');
+     Route::get('marketplace/seller/profile/{url}', 'Webkul\Marketplace\Http\Controllers\SellerController@index')->name('seller.profile.index')->defaults('_config', [
+                    'auth' => false
+             ]);
      
      
      
@@ -132,11 +134,14 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
       
       
       Route::get('/marketplace/seller/{url}/products', 'Webkul\Marketplace\Http\Controllers\ProductController@products')->defaults('_config', [
-            'view' => 'marketplace::shop.products.index'
+            'view' => 'marketplace::shop.products.index',
+            'auth' => false
         ])->name('seller.shop.productOrCategory.index');
       
       
-       Route::get('/seller-products/{seller_id}', 'Webkul\Marketplace\Http\Controllers\ProductController@getSellerProducts');
+       Route::get('/seller-products/{seller_id}', 'Webkul\Marketplace\Http\Controllers\ProductController@getSellerProducts')->defaults('_config', [
+            'auth' => false
+        ]);
        
        
        
@@ -145,7 +150,14 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
        
        Route::get('/marketplace/account/dashboard', 'Webkul\Marketplace\Http\Controllers\DashboardController@index')->name('marketplaceDashboard');
        
-        Route::post('/marketplace/seller/demoshop/contact', 'Webkul\Marketplace\Http\Controllers\SellerController@contact')->name('seller_contact');
+        Route::post('/marketplace/seller/demoshop/contact', 'Webkul\Marketplace\Http\Controllers\SellerController@contact')->name('seller_contact')
+             ->defaults('_config', [
+                    'auth' => false
+             ]);
+        
+        
+         Route::get('/marketplace/account/reviews', 'Webkul\Marketplace\Http\Controllers\ReviewController@index')
+            ->name('seller.review.index');
      
    
 });

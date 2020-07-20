@@ -37,9 +37,9 @@ class MarketplaceServiceProvider extends ServiceProvider{
             dirname(__DIR__) . '/Config/marketplace.php', 'menu.admin'
         );
         
-        $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/menu.php', 'menu.customer'
-        );
+//        $this->mergeConfigFrom(
+//            dirname(__DIR__) . '/Config/menu.php', 'menu.customer'
+//        );
         
         $this->mergeConfigFrom(
             dirname(__DIR__) . '/Config/system.php', 'core'
@@ -74,6 +74,20 @@ class MarketplaceServiceProvider extends ServiceProvider{
                 $view->with('is_seller', false);
             }
         });
+        
+        //showMarketPlace in side menu of customer
+        view()->composer('shop::customers.account.partials.sidemenu', function ($view) {
+            $view->with('showMarketPlace',false); 
+            $customer = auth()->guard('customer')->user();
+            if($customer->is_seller){
+                $seller  = \DB::table('sellers')->where('customer_id',$customer->id)->first();
+                if($seller->bo_status){
+                   $view->with('showMarketPlace',true); 
+                }
+            }
+        });
+        
+        
     }
 
 }

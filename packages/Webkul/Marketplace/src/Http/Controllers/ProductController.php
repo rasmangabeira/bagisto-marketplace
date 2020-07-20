@@ -49,8 +49,12 @@ class ProductController extends Controller
     
     public function __construct(ProductRepository $productRepository,AttributeFamilyRepository $attributeFamilyRepository,SellerProductRepository $sellerProductRepository,Helper $helper)
     {
-        $this->middleware('customer');
         $this->_config = request('_config');
+        if(isset($this->_config['auth']) && $this->_config['auth'] === false){
+            
+        }else{
+            $this->middleware('customer');
+        }
         $this->productRepository = $productRepository;
         $this->attributeFamilyRepository = $attributeFamilyRepository;
         $this->sellerProductRepository = $sellerProductRepository;
@@ -119,22 +123,23 @@ class ProductController extends Controller
       public function products(Request $request,$url) {
         
           $seller = \DB::table('sellers')->select('id')->where('url',$url)->first();
-      $slugOrPath = trim($request->getPathInfo(), '/');
-    $category = \Webkul\Category\Models\Category::find(1);
-        if (preg_match('/^([a-z0-9-]+\/?)+$/', $slugOrPath)) {
-            if ($product = $this->productRepository->findBySlug('cat-1')) {
-
-                $customer = auth()->guard('customer')->user();
-                $seller_id = $seller->id;
-                
-                
-
-                return view($this->_config['view'], compact('product', 'customer','category','seller_id'));
-            }
-
-        }
-
-        abort(404);
+            $seller_id = $seller->id;
+//      $slugOrPath = trim($request->getPathInfo(), '/');
+//
+//        if (preg_match('/^([a-z0-9-]+\/?)+$/', $slugOrPath)) {
+//            if ($product = $this->productRepository->findBySlug('cat-1')) {
+//
+//                $customer = auth()->guard('customer')->user();
+//              
+//                
+//                
+//
+//                return view($this->_config['view'], compact('product', 'customer','category','seller_id'));
+//            }
+//
+//        }
+  return view($this->_config['view'], compact('seller_id'));
+        //abort(404);
     }
     public function getSellerProducts($seller_id)
     {

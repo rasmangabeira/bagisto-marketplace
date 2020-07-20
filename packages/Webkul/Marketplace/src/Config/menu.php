@@ -13,7 +13,8 @@ return [
     ],
       [
         'key'   => 'marketplace.account',
-        'name'  => 'shop::app.layouts.my-account',
+        'name'  => 'Profile',
+
         'route' =>'seller.profile.edit',
         'sort'  => 1,
         ],

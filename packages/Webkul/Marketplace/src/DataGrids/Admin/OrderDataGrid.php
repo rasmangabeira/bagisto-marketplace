@@ -19,10 +19,9 @@ class OrderDataGrid extends DataGrid
         $queryBuilder = 
                 
             DB::table('seller_orders as order_seller')
-            ->join('orders as order', 'order.id', '=', 'order_seller.order_id')
             ->join('sellers as seller', 'order_seller.seller_id', '=', 'seller.id')
             ->join('customers as customer', 'customer.id', '=', 'seller.customer_id')
-                
+
                 
                 
                 // be carefull with one to many join
@@ -34,7 +33,7 @@ class OrderDataGrid extends DataGrid
            
                 
                 
-            ->addSelect('order.id as order_id','order_seller.grand_total','order.customer_first_name','order.status','order.created_at','order_seller.commission as commission','order_seller.seller_total as seller_total','order_seller.discount_amount as discount','order_seller.seller_id','order_seller.id as seller_order_id','order_seller.total_paid as paid',DB::raw('order_seller.seller_total_invoiced-order_seller.total_paid as remaining'),'order_seller.seller_total_invoiced as invoiced','order_seller.status as order_status',DB::raw('concat(customer.first_name," ",customer.last_name) as seller_name'))
+            ->addSelect('order_seller.order_id as order_id','order_seller.grand_total','order_seller.customer_first_name','order_seller.state','order_seller.created_at','order_seller.commission as commission','order_seller.seller_total as seller_total','order_seller.discount_amount as discount','order_seller.seller_id','order_seller.id as seller_order_id','order_seller.total_paid as paid',DB::raw('order_seller.seller_total_invoiced-order_seller.total_paid as remaining'),'order_seller.seller_total_invoiced as invoiced','order_seller.status as order_status',DB::raw('concat(customer.first_name," ",customer.last_name) as seller_name'))
                 
            ;    
    
@@ -74,7 +73,7 @@ class OrderDataGrid extends DataGrid
         ]);
          
          $this->addColumn([
-            'index'      => 'status',
+            'index'      => 'state',
             'label'      => 'Status',
             'type'       => 'string',
             'searchable' => false,
@@ -82,19 +81,19 @@ class OrderDataGrid extends DataGrid
             'filterable' => true,
             'closure'    => true,
             'wrapper'    => function ($value) {
-                if ($value->status == 'processing') {
+                if ($value->state == 'processing') {
                     return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.processing') . '</span>';
-                } elseif ($value->status == 'completed') {
+                } elseif ($value->state == 'completed') {
                     return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.completed') . '</span>';
-                } elseif ($value->status == "canceled") {
+                } elseif ($value->state == "canceled") {
                     return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.canceled') . '</span>';
-                } elseif ($value->status == "closed") {
+                } elseif ($value->state == "closed") {
                     return '<span class="badge badge-md badge-info">' . trans('shop::app.customer.account.order.index.closed') . '</span>';
-                } elseif ($value->status == "pending") {
+                } elseif ($value->state == "pending") {
                     return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending') . '</span>';
-                } elseif ($value->status == "pending_payment") {
+                } elseif ($value->state == "pending_payment") {
                     return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending-payment') . '</span>';
-                } elseif ($value->status == "fraud") {
+                } elseif ($value->state == "fraud") {
                     return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.fraud') . '</span>';
                 }
             },

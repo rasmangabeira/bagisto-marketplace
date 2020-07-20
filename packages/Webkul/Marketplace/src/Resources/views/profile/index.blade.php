@@ -1,4 +1,7 @@
 @extends('shop::layouts.master')
+@section('page_title')
+    {{ $seller->url }}
+@endsection
 
 @section('content-wrapper')
 <div class="main">

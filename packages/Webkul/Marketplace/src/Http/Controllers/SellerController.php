@@ -35,9 +35,13 @@ class SellerController extends Controller
         SellerRepository $sellerRepository
     )
     {
-        $this->middleware('customer');
-
         $this->_config = request('_config');
+        if(isset($this->_config['auth']) && $this->_config['auth'] === false){
+            
+        }else{
+            $this->middleware('customer');
+        }
+        
         $this->sellerRepository = $sellerRepository;
     }
 

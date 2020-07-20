@@ -80,9 +80,9 @@ class Customer
             if($seller_prod){
                 $ordersItems[$item->id] = $seller_prod->seller_id;
                 $isThereSeller = true;
-                $grand_total = $item->total + $item->tax_amount + $item->shipping_amount - $item->discount_amount;
+                
                 if(isset($sellers_item[$seller_prod->seller_id])){
-                    $grand_total  = $sellers_item[$seller_prod->seller_id]['grand_total'] + $grand_total;
+                    $grand_total  = $sellers_item[$seller_prod->seller_id]['grand_total'] + $item->total + $item->tax_amount  - $item->discount_amount;
                     $discount_amount  = $sellers_item[$seller_prod->seller_id]['discount_amount'] + $item->discount_amount; 
                     $tax_amount  = $sellers_item[$seller_prod->seller_id]['tax_amount'] + $item->tax_amount;
                     $total_qty_ordered  = $sellers_item[$seller_prod->seller_id]['total_qty_ordered'] + $item->qty_ordered;
@@ -97,6 +97,7 @@ class Customer
                     $total_item_count = 1;
                     $sub_total = $item->total;
                     $base_sub_total = $item->base_total;
+                    $grand_total = $item->total + $item->tax_amount - $item->discount_amount;
                 }
                 
                 $sellers_item[$seller_prod->seller_id] = [
@@ -119,6 +120,11 @@ class Customer
         
         if($isThereSeller){
             foreach ($sellers_item as $key=>$seller_item) {
+                
+                $sellers_item[$key]['grand_total'] = $seller_item['grand_total']+$order->shipping_amount - $order->shipping_discount_amount;
+                $sellers_item[$key]['base_grand_total'] = $seller_item['base_grand_total']+$order->base_shipping_amount- $order->base_shipping_discount_amount;
+                
+                
                 $admin_commission = $this->sellerRepository->getAdminCommission($seller_item['seller_id']);
                 
                 $base_commission = ($admin_commission/100) * $seller_item['sub_total'];
@@ -146,6 +152,13 @@ class Customer
                 $sellers_item[$key]['is_guest'] = $order->is_guest;
                 $sellers_item[$key]['state'] = $order->status;
                 $sellers_item[$key]['commission_percent'] = $admin_commission;
+                $sellers_item[$key]['shipping_discount_amount'] = $order->shipping_discount_amount;
+                $sellers_item[$key]['base_shipping_discount_amount'] = $order->base_shipping_discount_amount;
+                
+                
+                $sellers_item[$key]['discount_amount'] = $sellers_item[$key]['discount_amount'] + $order->shipping_discount_amount;
+                $sellers_item[$key]['base_discount_amount'] = $sellers_item[$key]['base_discount_amount'] + $order->base_shipping_discount_amount;
+                
                 
                 
                 //created_at
@@ -194,18 +207,11 @@ class Customer
                 if($is_seller){
                     $updateOrder = true;
                     $sub_total_invoiced +=  $item->total;
-                    $grand_total_invoiced +=  $item->total;
                     $discount_amount +=  $item->discount_amount;//TODO iam not sure this
                     $tax_amount_invoiced +=  $item->tax_amount;
                     
-                    if($item->discount_amount !=0){
-                        $grand_total_invoiced = $grand_total_invoiced - 
+                    $grand_total_invoiced += $item->total+$item->tax_amount - 
                                 $item->discount_amount;
-                    }
-                    if($item->tax_amount !=0){
-                        $grand_total_invoiced = $grand_total_invoiced + 
-                                $item->tax_amount;
-                    }
                 }
             }
             if($updateOrder){
@@ -216,8 +222,8 @@ class Customer
                 $this->sellerOrderRepository->update([
                     'sub_total_invoiced'=>$sellerOrder->sub_total_invoiced+$sub_total_invoiced,
                     'base_sub_total_invoiced'=>$sellerOrder->base_sub_total_invoiced+$sub_total_invoiced,
-                    'grand_total_invoiced'=>$sellerOrder->grand_total_invoiced+$grand_total_invoiced,
-                    'base_grand_total_invoiced'=>$sellerOrder->base_grand_total_invoiced+$grand_total_invoiced,
+                    'grand_total_invoiced'=>$sellerOrder->grand_total_invoiced+$grand_total_invoiced + $invoice->shipping_amount,
+                    'base_grand_total_invoiced'=>$sellerOrder->base_grand_total_invoiced+$grand_total_invoiced+ $invoice->base_shipping_amount,
                     'discount_invoiced'=>$sellerOrder->discount_invoiced+$discount_amount,
                     'base_discount_invoiced'=>$sellerOrder->base_discount_invoiced+$discount_amount,
                     'tax_amount_invoiced'=>$sellerOrder->tax_amount_invoiced+$tax_amount_invoiced,
@@ -247,23 +253,16 @@ class Customer
             
             $grand_total = $total = $discount_amount = $tax_amount = 0;
             foreach ($items as $key => $item) {
-                $grand_total += $item->total;
                 $total += $item->total;
                 $discount_amount += $item->discount_amount;
                 $tax_amount += $item->tax_amount;
-                // check if item has tax
-                if($item->tax_amount != 0){
-                    $grand_total = $grand_total + $item->tax_amount;
-                }
-                if($item->discount_amount != 0){
-                    $grand_total = $grand_total - $item->discount_amount;
-                }
+                $grand_total +=  $item->total + $item->tax_amount- $item->discount_amount;
             }
             
             $sellerOrder->sub_total_refunded = $sellerOrder->sub_total_refunded+$total;
             $sellerOrder->base_sub_total_refunded = $sellerOrder->base_sub_total_refunded+$total;
-            $sellerOrder->grand_total_refunded = $sellerOrder->grand_total_refunded+$grand_total;
-            $sellerOrder->base_grand_total_refunded = $sellerOrder->base_grand_total_refunded+$grand_total;
+            $sellerOrder->grand_total_refunded = $sellerOrder->grand_total_refunded+$grand_total+ $refund->shipping_amount;
+            $sellerOrder->base_grand_total_refunded = $sellerOrder->base_grand_total_refunded+$grand_total+ $refund->base_shipping_amount;
             
             
             $sellerOrder->discount_refunded = $sellerOrder->discount_refunded+$discount_amount;

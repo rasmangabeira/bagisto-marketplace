@@ -18,9 +18,8 @@ class OrderDataGrid extends DataGrid
         $cus_id = auth()->guard('customer')->user()->id;
         $seller  = \DB::table('sellers')->where('customer_id',$cus_id)->first();
         $queryBuilder = 
-                DB::table('seller_orders as order_seller')
-            ->join('orders as order', 'order.id', '=', 'order_seller.order_id')    
-            ->addSelect('order_seller.id as order_id','order_seller.grand_total','order_seller.sub_total','order.created_at','order.status','order.customer_first_name')
+                DB::table('seller_orders as order_seller')  
+            ->addSelect('order_seller.id as order_id','order_seller.grand_total','order_seller.sub_total','order_seller.created_at','order_seller.state','order_seller.customer_first_name')
                 
             ->where('order_seller.seller_id', $seller->id); 
         $this->addFilter('order_id','order.id');
@@ -62,7 +61,7 @@ class OrderDataGrid extends DataGrid
             'filterable' => true,
         ]);
         $this->addColumn([
-            'index'      => 'status',
+            'index'      => 'state',
             'label'      => 'Status',
             'type'       => 'string',
             'searchable' => false,
@@ -70,19 +69,19 @@ class OrderDataGrid extends DataGrid
             'filterable' => true,
             'closure'    => true,
             'wrapper'    => function ($value) {
-                if ($value->status == 'processing') {
+                if ($value->state == 'processing') {
                     return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.processing') . '</span>';
-                } elseif ($value->status == 'completed') {
+                } elseif ($value->state == 'completed') {
                     return '<span class="badge badge-md badge-success">' . trans('shop::app.customer.account.order.index.completed') . '</span>';
-                } elseif ($value->status == "canceled") {
+                } elseif ($value->state == "canceled") {
                     return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.canceled') . '</span>';
-                } elseif ($value->status == "closed") {
+                } elseif ($value->state == "closed") {
                     return '<span class="badge badge-md badge-info">' . trans('shop::app.customer.account.order.index.closed') . '</span>';
-                } elseif ($value->status == "pending") {
+                } elseif ($value->state == "pending") {
                     return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending') . '</span>';
-                } elseif ($value->status == "pending_payment") {
+                } elseif ($value->state == "pending_payment") {
                     return '<span class="badge badge-md badge-warning">' . trans('shop::app.customer.account.order.index.pending-payment') . '</span>';
-                } elseif ($value->status == "fraud") {
+                } elseif ($value->state == "fraud") {
                     return '<span class="badge badge-md badge-danger">' . trans('shop::app.customer.account.order.index.fraud') . '</span>';
                 }
             },
