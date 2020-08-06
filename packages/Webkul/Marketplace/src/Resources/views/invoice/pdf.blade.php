@@ -230,7 +230,7 @@
                     <tr>
                         <td>{{ __('admin::app.sales.orders.subtotal') }}</td>
                         <td>-</td>
-                        <td>{{ core()->formatBasePrice($invoice->base_sub_total) }}</td>
+                        <td>{{ core()->formatBasePrice($invoiceItems->sum('base_total')) }}</td>
                     </tr>
 
                     <tr>
@@ -242,19 +242,19 @@
                     <tr>
                         <td>{{ __('admin::app.sales.orders.tax') }}</td>
                         <td>-</td>
-                        <td>{{ core()->formatBasePrice($invoice->base_tax_amount) }}</td>
+                        <td>{{ core()->formatBasePrice($invoiceItems->sum('base_tax_amount')) }}</td>
                     </tr>
 
                     <tr>
                         <td>{{ __('admin::app.sales.orders.discount') }}</td>
                         <td>-</td>
-                        <td>{{ core()->formatBasePrice($invoice->base_discount_amount) }}</td>
+                        <td>{{ core()->formatBasePrice($invoiceItems->sum('discount_amount')) }}</td>
                     </tr>
 
                     <tr class="bold">
                         <td>{{ __('admin::app.sales.orders.grand-total') }}</td>
                         <td>-</td>
-                        <td>{{ core()->formatBasePrice($invoice->base_grand_total) }}</td>
+                        <td>{{ core()->formatBasePrice($invoiceItems->sum('base_total')+$invoiceItems->sum('base_tax_amount')-$invoiceItems->sum('discount_amount')) }}</td>
                     </tr>
                 </table>
 

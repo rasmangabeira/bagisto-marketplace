@@ -57,8 +57,14 @@ class SellerController extends Controller
                      ->select(\DB::raw('count(*) as count'))
                      ->where('seller_id',$seller->id)
                      ->first();
-     
-        return view('marketplace::profile.index',['seller'=>$seller,'productCount'=>$count->count]);
+        
+        $reviewHelper = app('Webkul\Marketplace\Helpers\Review');
+        $averageRatingForSeller = $reviewHelper->getAverageRatingForSeller($seller->id);
+        
+        $numRatingForSeller = $reviewHelper->getNumRatingForSeller($seller->id);
+        $numCommentForSeller = $reviewHelper->getNumCommentForSeller($seller->id);
+
+        return view('marketplace::profile.index',['seller'=>$seller,'productCount'=>$count->count,'averageRatingForSeller'=>$averageRatingForSeller,'numRatingForSeller'=>$numRatingForSeller,'numCommentForSeller'=>$numCommentForSeller]);
     }
 
     
@@ -103,4 +109,4 @@ class SellerController extends Controller
         Mail::queue(new \Webkul\Marketplace\Mail\ContactSellerEmail([]));
     }
     
-}
+    }

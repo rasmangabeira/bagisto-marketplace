@@ -1,4 +1,8 @@
 @extends('shop::layouts.master')
+@section('seo')
+    <meta name="description" content="{{ trim($seller->meta_description) != "" ? $seller->meta_description : str_limit(strip_tags($seller->description), 120, '') }}"/>
+    <meta name="keywords" content="{{ $seller->meta_keywords }}"/>
+@stop
 @section('page_title')
     {{ $seller->url }}
 @endsection
@@ -14,6 +18,18 @@
                 <div class="profile-information-block">
                     <div class="row">
                         <h2 class="shop-title">{{ $seller->shop_title }}</h2>
+                    </div>
+                    <div class="row">
+                        <div class="review-info">
+                            <span class="number">
+                                {{$averageRatingForSeller}}
+                            </span>
+                            <div class="total-reviews">
+                                <a href="">
+                                    {{$numRatingForSeller}} Ratings &amp; {{$numCommentForSeller}} Reviews
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="row social-links">
                         

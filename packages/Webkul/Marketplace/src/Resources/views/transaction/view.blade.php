@@ -46,7 +46,7 @@
                         <td data-value="Price">{{$orderItem->price}}</td>
                         <td data-value="Qty">{{$orderItem->qty_ordered}}</td>
                         <td data-value="Total">{{$orderItem->total}}</td>
-                        <td data-value="Commission">{{$orderItem->commission}}</td>
+                        <td data-value="Commission">{{$orderItem->getCommissionAttribute($order->commission_percent)}}</td>
                         <td data-value="Seller Total">{{$orderItem->seller_total}}</td>
                   </tr>
                   @endforeach
@@ -65,7 +65,7 @@
                                                         <tr>
                                                             <td>Shipping &amp; Handling</td>
                                                             <td>-</td>
-                                                            <td>TODO</td>
+                                                            <td>{{$order->shipping_amount}}</td>
                                                         </tr>
                                                         <tr>
                                                             <td>Tax</td>
@@ -75,7 +75,7 @@
                                                         <tr class="bold">
                                                             <td>Commission</td>
                                                             <td>-</td>
-                                                            <td>-{{$order->commission}}</td>
+                                                            <td>{{$order->commission}}</td>
                                                         </tr>
                                                         <tr class="bold">
                                                             <td>Seller Total</td>

@@ -51,28 +51,18 @@ class OrderController extends Controller{
     public function view($id)
     {
         $order = $this->orderRepository->findOrFail($id);
-        $invoices = $order->invoices;
-
-        $invoicesItems = $invoice_ids = [];
-        foreach ($invoices as $key => $invoice) {
-           
-            $invoicesItems = $invoice->items()->whereHas('order_item', function ($query) use($id){
-                return $query->where('seller_order_id', '=', $id);
-            })->get();
-        }
+        $invoicesItems = $order->invoicesItems($id);
+        
         if($invoicesItems){
             $invoicesItems = $invoicesItems->groupBy('invoice_id');
         }
-        
-        $shipmentItems = $order->shipmentItems($id);
+        $shipmentItems = $order->shipmentsItems($id);
 
         if($shipmentItems){
             $shipmentItems = $shipmentItems->groupBy('shipment_id');
-            $shipment_ids = $shipmentItems->pluck('shipment_id')->toArray();
-            $shipments = $order->shipments($shipment_ids)->get();
+            $shipments = $order->shipments($shipmentItems->keys()->toArray())->get();
         }
-        
-        $refundItems = $order->refundItems($id);
+        $refundItems = $order->refundsItems($id);
         if($refundItems){
             $refund_ids = $refundItems->pluck('refund_id')->toArray();
             $refunds = $order->refunds($refund_ids)->get();

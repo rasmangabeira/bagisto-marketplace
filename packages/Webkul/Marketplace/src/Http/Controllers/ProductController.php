@@ -122,8 +122,9 @@ class ProductController extends Controller
     
       public function products(Request $request,$url) {
         
-          $seller = \DB::table('sellers')->select('id')->where('url',$url)->first();
-            $seller_id = $seller->id;
+        $seller = \Webkul\Marketplace\Models\Seller::where('url',$url)
+                ->first();
+     
 //      $slugOrPath = trim($request->getPathInfo(), '/');
 //
 //        if (preg_match('/^([a-z0-9-]+\/?)+$/', $slugOrPath)) {
@@ -138,7 +139,7 @@ class ProductController extends Controller
 //            }
 //
 //        }
-  return view($this->_config['view'], compact('seller_id'));
+  return view($this->_config['view'], compact('seller'));
         //abort(404);
     }
     public function getSellerProducts($seller_id)

@@ -5,14 +5,18 @@
 @endsection
 
 @section('page-detail-wrapper')
-    <div class="account-head">
-        <a href="{{ route('customer.session.destroy') }}" class="theme-btn light unset pull-right">
-            {{ __('shop::app.header.logout') }}
-        </a>
-
-        <h1 class="account-heading">
-            {{ __('shop::app.customer.account.profile.index.title') }}
-        </h1>
+    <div class="account-head seller-profile-edit mb-10">
+        <span class="account-heading">
+            {{ __('Edit Seller Profile') }}
+        </span>
+        <div class="account-action">
+            <a href="{{route('seller.shop.productOrCategory.index',$seller->url)}}" target="_blank" class="btn btn-black btn-lg theme-btn">
+                View Collection page
+            </a>
+            <a href="{{route('seller.profile.index',$seller->url)}}" target="_blank" class="btn btn-black btn-lg theme-btn">
+                View Seller Page
+            </a>
+        </div>
     </div>
 
    

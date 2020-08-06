@@ -87,6 +87,12 @@ class CreateSellerOrdersTable extends Migration
             $table->timestamp('created_at')->nullable();
             //
         });
+        
+        Schema::table('order_items', function($table) {
+            $table->bigIncrements('seller_order_id')->nullable();
+            $table->foreign('seller_order_id')->references('id')->on('seller_orders')->onDelete('set null');
+        });
+        
     }
 
     /**

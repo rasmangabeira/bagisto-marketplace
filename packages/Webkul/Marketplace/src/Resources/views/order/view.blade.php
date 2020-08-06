@@ -169,7 +169,7 @@
                                             {{$invoiceItem->discount_amount}}
                                         </td>
                                         <td data-value="Grand Total">
-                                            {{$invoiceItem->total + $invoiceItem->tax_amount}}
+                                            {{$invoiceItem->total + $invoiceItem->tax_amount -$invoiceItem->discount_amount}}
                                         </td>
                                     </tr>
                                     @endforeach
@@ -257,13 +257,13 @@
                             <table class="sale-summary">
                                 <tbody>
                                     <tr><td>Subtotal
-                                                        <span class="dash-icon">-</span></td> <td>{{$refund->sub_total}}</td></tr>
+                                                        <span class="dash-icon">-</span></td> <td>{{$refundItems[$refund->id]->sum('total')}}</td></tr>
                                     <tr><td>Adjustment Refund
                                                         <span class="dash-icon">-</span></td> <td>{{$refund->adjustment_refund}}</td></tr>
                                     <tr><td>Adjustment Fee
                                                         <span class="dash-icon">-</span></td> <td>{{$refund->adjustment_fee}}</td></tr> 
                                     <tr class="fw6"><td>Grand Total
-                                                        <span class="dash-icon">-</span></td> <td>{{$refund->grand_total}}</td></tr></tbody>
+                                                        <span class="dash-icon">-</span></td> <td>{{$refundItems[$refund->id]->sum('total')+$refundItems[$refund->id]->sum('tax_amount')-$refundItems[$refund->id]->sum('discount_amount')}}</td></tr></tbody>
                             </table>
                         </div>
                     </div>

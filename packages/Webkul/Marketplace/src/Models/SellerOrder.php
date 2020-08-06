@@ -23,6 +23,25 @@ class SellerOrder extends Model implements SellerOrderContract
      
     public const ADDRESS_TYPE_SHIPPING = 'order_shipping';
     public const ADDRESS_TYPE_BILLING = 'order_billing';
+    
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_PENDING_PAYMENT = 'pending_payment';
+    public const STATUS_PROCESSING = 'processing';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELED = 'canceled';
+    public const STATUS_CLOSED = 'closed';
+    public const STATUS_FRAUD = 'fraud';
+
+
+    protected $stateLabel = [
+        self::STATUS_PENDING         => 'Pending',
+        self::STATUS_PENDING_PAYMENT => 'Pending Payment',
+        self::STATUS_PROCESSING      => 'Processing',
+        self::STATUS_COMPLETED       => 'Completed',
+        self::STATUS_CANCELED        => 'Canceled',
+        self::STATUS_CLOSED          => 'Closed',
+        self::STATUS_FRAUD           => 'Fraud',
+    ];
      
      
     /**
@@ -103,18 +122,31 @@ class SellerOrder extends Model implements SellerOrderContract
     /**
      * Get the order shipments record associated with the order.
      */
-    public function shipmentItems($seller_order_id)
+    public function shipmentsItems($seller_order_id)
     {
         return (\Webkul\Sales\Models\ShipmentItemProxy::modelClass())
+            
            ::join('order_items as order_item', 'order_item.id', '=', 'shipment_items.order_item_id')
+            ->select('shipment_items.*')     
             ->where('order_item.seller_order_id',$seller_order_id)
             ->get();
     }
     
-    public function refundItems($seller_order_id)
+    public function refundsItems($seller_order_id)
     {
         return (\Webkul\Sales\Models\RefundItemProxy::modelClass())
            ::join('order_items as order_item', 'order_item.id', '=', 'refund_items.order_item_id')
+            ->select('refund_items.*')    
+            ->where('order_item.seller_order_id',$seller_order_id)
+            ->get();
+    }
+    
+    public function invoicesItems($seller_order_id)
+    {
+        return (\Webkul\Sales\Models\InvoiceItemProxy::modelClass())
+       
+           ::join('order_items as order_item', 'order_item.id', '=', 'invoice_items.order_item_id')
+            ->select('invoice_items.*')
             ->where('order_item.seller_order_id',$seller_order_id)
             ->get();
     }

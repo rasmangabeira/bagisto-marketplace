@@ -78,7 +78,6 @@ class TransactionController extends Controller{
         $transaction = $this->sellerInvoiceRepository->findOrFail($id);
         $orderItems = $this->sellerInvoiceRepository->orderItems($transaction->order_id);
         $order= $this->sellerOrderRepository->getOrderInfo($transaction->order_id);
-        //dd($this->sellerOrderRepository->getOrderInfo($transaction->order_id));
         return view($this->_config['view'], compact('transaction','orderItems','order'));
     }
     

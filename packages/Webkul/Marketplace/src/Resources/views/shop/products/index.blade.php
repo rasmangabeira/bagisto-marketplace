@@ -4,7 +4,7 @@
 @extends('shop::layouts.master')
 
 @section('page_title')
-
+ {{ __('products')  }} -{{$seller->url}}
 @stop
 
 @section('seo')
@@ -37,11 +37,23 @@
 */
 
 $isDisplayMode = 1;
-    $products = $productRepository->getAll($seller_id);
+    $products = $productRepository->getAll($seller->id);
 @endphp
 
 @section('content-wrapper')
+<div class="main">
+    <div class="profile-container">
+        <div class="profile-top-block mb15">
+            <div class="profile-information padding-15">
+                <img height="120" width="120" src="{{ $seller->logo_url }}">
+                <div class="profile-information-block"><a href="{{route('seller.profile.index',$seller->url)}}" class="shop-title">{{$seller->url}}</a> <label class="shop-address">
+                 
+                </label></div>
+            </div>
+        </div>
+    </div>
     <category-component></category-component>
+</div>    
 @stop
 
 @push('scripts')
@@ -141,7 +153,7 @@ $isDisplayMode = 1;
 
             methods: {
                 'getCategoryProducts': function () {
-                    this.$http.get(`${this.$root.baseUrl}/seller-products/{{ $seller_id }}${window.location.search}`)
+                    this.$http.get(`${this.$root.baseUrl}/seller-products/{{ $seller->id }}${window.location.search}`)
                     .then(response => {
                         this.isLoading = false;
                         this.products = response.data.products.data;
