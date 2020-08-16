@@ -23,7 +23,7 @@ class CreateProductAttributeValuesTable extends Migration
             $table->double('float_value')->nullable();
             $table->dateTime('datetime_value')->nullable();
             $table->date('date_value')->nullable();
-            $table->json('json_value')->nullable();
+            $table->text('json_value')->nullable();//todo abd
             $table->integer('product_id')->unsigned();
             $table->integer('attribute_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

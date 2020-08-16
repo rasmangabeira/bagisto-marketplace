@@ -14,7 +14,7 @@ class AddSeoColumnInChannelsTable extends Migration
     public function up()
     {
         Schema::table('channels', function (Blueprint $table) {
-            $table->json('home_seo')->nullable();
+            $table->text('home_seo')->nullable();//todo abd
         });
     }
 

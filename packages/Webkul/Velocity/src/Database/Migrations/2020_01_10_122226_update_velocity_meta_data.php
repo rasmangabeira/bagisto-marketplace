@@ -14,7 +14,7 @@ class UpdateVelocityMetaData extends Migration
     public function up()
     {
         Schema::table('velocity_meta_data', function (Blueprint $table) {
-            $table->json('product_view_images')->nullable();
+            $table->text('product_view_images')->nullable();//todo abd
         });
     }
 

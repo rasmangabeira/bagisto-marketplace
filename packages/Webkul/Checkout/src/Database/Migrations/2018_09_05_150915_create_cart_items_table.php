@@ -39,7 +39,7 @@ class CreateCartItemsTable extends Migration
             $table->decimal('discount_amount', 12,4)->default(0);
             $table->decimal('base_discount_amount', 12,4)->default(0);
 
-            $table->json('additional')->nullable();
+            $table->text('additional')->nullable();//todo abd
 
             $table->integer('parent_id')->unsigned()->nullable();
             $table->integer('product_id')->unsigned();

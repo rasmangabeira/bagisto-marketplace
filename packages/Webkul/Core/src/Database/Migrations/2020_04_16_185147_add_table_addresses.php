@@ -48,7 +48,7 @@ class AddTableAddresses extends Migration
                     ->default(false)
                     ->comment('only for customer_addresses');
 
-                $table->json('additional')->nullable();
+                $table->text('additional')->nullable();//todo abd
 
                 $table->timestamps();
 

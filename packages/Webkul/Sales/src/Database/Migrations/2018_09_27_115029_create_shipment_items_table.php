@@ -31,7 +31,7 @@ class CreateShipmentItemsTable extends Migration
             $table->integer('order_item_id')->unsigned()->nullable();
             $table->integer('shipment_id')->unsigned();
             $table->foreign('shipment_id')->references('id')->on('shipments')->onDelete('cascade');
-            $table->json('additional')->nullable();
+            $table->text('additional')->nullable();//todo abd
             $table->timestamps();
         });
     }

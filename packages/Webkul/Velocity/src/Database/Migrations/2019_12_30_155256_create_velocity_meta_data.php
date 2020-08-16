@@ -19,7 +19,7 @@ class CreateVelocityMetaData extends Migration
             $table->text('footer_left_content');
             $table->text('footer_middle_content');
             $table->boolean('slider')->default(0);
-            $table->json('advertisement')->nullable();
+            $table->text('advertisement')->nullable();//todo abd
             $table->integer('sidebar_category_count')->default(9);
             $table->integer('featured_product_count')->default(10);
             $table->integer('new_products_count')->default(10);

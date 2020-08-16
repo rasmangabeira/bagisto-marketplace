@@ -24,7 +24,7 @@ class CreateWishlistTable extends Migration
             $table->integer('customer_id')->unsigned();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
 
-            $table->json('item_options')->nullable();
+            $table->text('item_options')->nullable();//todo abd
             $table->date('moved_to_cart')->nullable();
             $table->boolean('shared')->nullable();
             $table->date('time_of_moving')->nullable();

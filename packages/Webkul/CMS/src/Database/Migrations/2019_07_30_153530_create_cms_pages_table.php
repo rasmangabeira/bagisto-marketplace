@@ -21,7 +21,7 @@ class CreateCmsPagesTable extends Migration
             $table->string('meta_title');
             $table->text('meta_description')->nullable();
             $table->text('meta_keywords')->nullable();
-            $table->json('content')->nullable();
+            $table->text('content')->nullable();//todo abd
             $table->string('layout')->nullable();
             $table->integer('channel_id')->unsigned();
             $table->foreign('channel_id')->references('id')->on('channels')->onDelete('cascade');

@@ -14,7 +14,7 @@ class AddAdditionalCloumnInWishlistTable extends Migration
     public function up()
     {
         Schema::table('wishlist', function (Blueprint $table) {
-            $table->json('additional')->nullable();
+            $table->text('additional')->nullable();//todo abd
         });
     }
 
