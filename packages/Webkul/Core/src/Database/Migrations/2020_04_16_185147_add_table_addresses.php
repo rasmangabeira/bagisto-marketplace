@@ -129,7 +129,7 @@ class AddTableAddresses extends Migration
                 null,
                 phone,
                 default_address,
-                JSON_INSERT('{}', '$.old_customer_address_id', id),
+                "",
                 created_at,
                 updated_at
             FROM customer_addresses ca;
@@ -179,7 +179,7 @@ SQL;
                 country,
                 email,
                 phone,
-                JSON_INSERT('{}', '$.old_cart_address_id', id),
+                "",
                 created_at,
                 updated_at
             FROM cart_address ca;
@@ -229,7 +229,7 @@ SQL;
                 country,
                 email,
                 phone,
-                JSON_INSERT('{}', '$.old_order_address_id', id),
+                "",
                 created_at,
                 updated_at
             FROM order_address oa;
